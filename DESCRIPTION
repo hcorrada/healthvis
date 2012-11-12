@@ -11,7 +11,7 @@ Description: The healthvis package is designed to make it easy to create and
     interactive graphics built with the Javascript library D3.js
     (http://d3js.org/). They can be directly plotted on your local machine,
     published to healthvis.org, and embedded directly into other websites. To
-    see all currently available plots use the command listHealthvis().
+    see all currently available plots use the command listHealthVis().
 Suggests:
     testthat,
     roxygen2
@@ -31,3 +31,4 @@ Collate:
     'writeD3AccuracyTable.R'
     'writeD3AccuracyTableCss.R'
     'writeD3SurvivalCss.R'
+    'listHealthVis.R'
