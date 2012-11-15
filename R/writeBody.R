@@ -39,10 +39,14 @@ writeBody <- function(d3.script, plot.title="Individualized survival plot", var.
 
 	html.body <- paste(html.body,writeForm(var.type,var.list))
 
-
 	# Close out the divs/body/html
 	html.body <- paste(html.body,'\n\t\t\t\t</div>')
 	html.body <- paste(html.body,'\n\t\t\t</div>')
+
+	# Add the publish button
+
+	html.body <- paste(html.body, writePublish())
+
 	html.body <- paste(html.body,'\n\t\t</div>')
 	html.body <- paste(html.body,'\n\t</body>')
 	html.body <- paste(html.body,'\n</html>')
