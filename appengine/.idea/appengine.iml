@@ -6,6 +6,7 @@
         <option name="rootFolder" value="$MODULE_DIR$" />
         <option name="sdkFolder" value="/usr/local/google_appengine" />
         <option name="templatesFolder" value="" />
+        <option name="email" value="hcorrada@gmail.com" />
       </configuration>
     </facet>
   </component>

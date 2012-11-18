@@ -12,6 +12,12 @@
 
 <body>
 <div class="container" id="maincontent">
+    <div class="page-header">
+        <h1>{{ obj.title }}</h1>
+        <p>created with the <a href="http://healthvis.org">healthvis</a> R package
+            and powered by <a href="http://d3js.org">Data Driven Documents</a></p>
+    </div>
+
     {% block content %} <!-- main content here --> {% endblock %}
 
     {% set plot_id = obj.key().id() %}
