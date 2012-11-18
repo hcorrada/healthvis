@@ -7,7 +7,7 @@
 #' @export
 #' 
 
-accuracyTableVis <- function(plot.title="Sensitivity/Specificity Plot",plot=TRUE){
+accuracyTableVis2 <- function(plot.title="Sensitivity/Specificity Plot",plot=TRUE){
   # Create the healthvis object
   healthvisObj <- list()
   class(healthvisObj) <- "healthvis"
@@ -15,9 +15,14 @@ accuracyTableVis <- function(plot.title="Sensitivity/Specificity Plot",plot=TRUE
   healthvisObj$var.type <-c("continuous","continuous","continuous")
   healthvisObj$var.list <- list(Sens=c(0,1),Spec=c(0,1),Prev=c(0,1))
   healthvisObj$plot.title <- plot.title
-  healthvisObj$page.html <- writePage(writeD3AccuracyTable(), writeD3AccuracyTableCss(),
-                            var.type=healthvisObj$var.type,var.list=healthvisObj$var.list,
-                            plot.title=healthvisObj$plot.title)
+  
+  obj.id = RCurl::postForm("http://localhost:8080/post_data",
+                           title=healthvisObj$plot.tile,
+                           type=healthvisObj$type,
+                           varlist=rjson::toJSON(healthvisObj$var.list),
+                           vartype=rjson::toJSON(healthvisObj$var.type))
+  healthvisObj$id=obj.id
+  
   if(plot){
     plot(healthvisObj)
   }
