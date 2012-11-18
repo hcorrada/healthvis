@@ -16,6 +16,7 @@ Suggests:
     testthat,
     roxygen2
 Depends:
+    RCurl,
     rjson,
     survival
 Collate:
