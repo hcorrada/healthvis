@@ -7,7 +7,7 @@
 #' @export
 #' 
 
-accuracyTableVis2 <- function(plot.title="Sensitivity/Specificity Plot",plot=TRUE){
+accuracyTableVis <- function(plot.title="Sensitivity/Specificity Plot",plot=TRUE,local=FALSE){
   # Create the healthvis object
   healthvisObj <- list()
   class(healthvisObj) <- "healthvis"
@@ -16,11 +16,20 @@ accuracyTableVis2 <- function(plot.title="Sensitivity/Specificity Plot",plot=TRU
   healthvisObj$var.list <- list(Sens=c(0,1),Spec=c(0,1),Prev=c(0,1))
   healthvisObj$plot.title <- plot.title
   
-  obj.id = RCurl::postForm("http://localhost:8080/post_data",
-                           title=healthvisObj$plot.tile,
-                           type=healthvisObj$type,
-                           varlist=rjson::toJSON(healthvisObj$var.list),
-                           vartype=rjson::toJSON(healthvisObj$var.type))
+  healthvisObj$url=ifelse(local, .localURL, .gaeURL)
+  url = sprintf("%s/post_data", healthvisObj$url)
+  cat("Posting data to URL:", url, "\n")
+  
+  obj.id = RCurl::postForm(sprintf("%s/post_data", healthvisObj$url),
+                           .params=list(
+                            plottitle=healthvisObj$plot.title,
+                            plottype=healthvisObj$type,
+                            varlist=rjson::toJSON(healthvisObj$var.list),
+                            vartype=rjson::toJSON(healthvisObj$var.type))
+  )
+  if (obj.id == "error")
+    stop("Error posting data")
+  
   healthvisObj$id=obj.id
   
   if(plot){

@@ -20,16 +20,8 @@ Depends:
     rjson,
     survival
 Collate:
-    'writePage.R'
-    'writeBody.R'
-    'writeForm.R'
-    'writeHeader.R'
-    'writeValidate.R'
     'survivalVis.R'
     'healthvisMethods.R'
-    'writeD3Survival.R'
     'accuracyTableVis.R'
-    'writeD3AccuracyTable.R'
-    'writeD3AccuracyTableCss.R'
-    'writeD3SurvivalCss.R'
     'listHealthVis.R'
+    'zzz.R'

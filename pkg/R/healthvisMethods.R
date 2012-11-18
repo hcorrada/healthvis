@@ -6,20 +6,9 @@
 #' @method plot healthvis
 #' @return \code{NULL}
 
-plot.healthvis <- function(x,file.name="healthvis.html"){
-  isServerRunning <- function() {
-    tools:::httpdPort > 0L
-  }
-    
-  if(!isServerRunning()) {
-    	tools:::startDynamicHelp()
-  }
-
-  root.dir <- tempdir()
-  temp.file <- file.path(root.dir,paste(file.name))
-  cat(x$page.html,file=temp.file)
-
-  browseURL(temp.file)
-
+plot.healthvis <- function(x){
+  url=sprintf("%s/display/%s", x$url, x$id)
+  cat("Opening plot at URL: ", url, "\n")
+  browseURL(url)
 }
 

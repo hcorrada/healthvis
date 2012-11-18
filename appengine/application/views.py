@@ -13,8 +13,8 @@ def index():
     return render_template('index.html')
 
 def post_data():
-    title = request.form['title']
-    type = request.form['type']
+    title = request.form['plottitle']
+    type = request.form['plottype']
     var_list = request.form['varlist']
     var_type = json.loads(request.form['vartype'])
 
@@ -22,7 +22,10 @@ def post_data():
                     title=title,
                     var_type=var_type,
                     var_list=var_list)
-    obj.put()
+    try:
+        obj.put()
+    except:
+        return "error"
     return str(obj.key().id())
 
 def display_accuracy_table(obj, form, field_names):
