@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta lang="en">
+    {% block title %} <!-- plot title will go here --> {% endblock %}
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap-2.0.2.min.css" />
+    {% block style_block %} <!-- page-specific css here --> {% endblock %}
+    <script src="/static/js/lib/modernizr-2.5.3.min.js"></script>
+    {% block head_script %} <!-- defer-incompatible JS block --> {% endblock %}
+</head>
+
+<body>
+<div class="container" id="maincontent">
+    {% block content %} <!-- main content here --> {% endblock %}
+</div>
+
+<footer>
+    <div id="footer" class="container">
+        {% block footer %} {% endblock %}
+    </div>
+</footer>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="/static/js/lib/bootstrap-2.0.3.min.js"></script>
+{% block tail_script %} <!-- defer-compatible JS block --> {% endblock %}
+</body>
+</html>
