@@ -19,27 +19,21 @@ def generate_factor_field(values):
     return FactorCovariate(choices=values)
 
 def generate_form(obj):
-    var_list = json.loads(obj.var_list)
-    var_names = var_list.keys()
-    var_values = var_list.values()
-
-    field_names = []
+    tmp_var_list = json.loads(obj.var_list)
+    var_values = [tmp_var_list[name] for name in obj.var_names]
 
     class CovariateForm(wtf.Form):
         pass
 
     field = None
-    for type,name,values in zip(obj.var_type,var_names,var_values):
+    for type,name,values in zip(obj.var_type,obj.var_names,var_values):
         if type == 'continuous':
             field = ContinuousCovariate(default=values[0], min=values[0], max=values[1])
         elif type == 'factor':
             field = FactorCovariate(values)
 
         setattr(CovariateForm, name, field)
-        field_names.append(name)
 
     form = CovariateForm()
-    logging.debug(str(form))
-    logging.debug(str(field_names))
-    return form, field_names
+    return form
 

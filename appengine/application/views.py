@@ -19,29 +19,31 @@ def post_data():
     type = request.form['plottype']
     var_list = request.form['varlist']
     var_type = json.loads(request.form['vartype'])
+    var_names = json.loads(request.form['varnames'])
 
     obj = HealthVis(type=type,
                     title=title,
                     var_type=var_type,
-                    var_list=var_list)
+                    var_list=var_list,
+                    var_names=var_names)
     try:
         obj.put()
     except:
         return "error"
     return str(obj.key().id())
 
-def display_accuracy_table(obj, form, field_names):
-    return render_template("accuracy_table.html", obj=obj, form=form, field_names=field_names)
+def display_accuracy_table(obj, form):
+    return render_template("accuracy_table.html", obj=obj, form=form)
 
 def display(id):
     obj = HealthVis.get_by_id(id)
     if obj is None:
         return render_template("500.html")
 
-    form, field_names = generate_form(obj)
+    form = generate_form(obj)
 
     if obj.type == "accuracyTable":
-        return display_accuracy_table(obj, form, field_names)
+        return display_accuracy_table(obj, form)
     else:
         return "plot type not supported"
 

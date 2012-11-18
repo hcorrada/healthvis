@@ -25,7 +25,8 @@ accuracyTableVis <- function(plot.title="Sensitivity/Specificity Plot",plot=TRUE
                             plottitle=healthvisObj$plot.title,
                             plottype=healthvisObj$type,
                             varlist=rjson::toJSON(healthvisObj$var.list),
-                            vartype=rjson::toJSON(healthvisObj$var.type))
+                            vartype=rjson::toJSON(healthvisObj$var.type),
+                            varnames=rjson::toJSON(names(healthvisObj$var.list)))
   )
   if (obj.id == "error")
     stop("Error posting data")
