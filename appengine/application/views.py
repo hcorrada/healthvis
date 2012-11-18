@@ -2,6 +2,8 @@ from flask import render_template, request, redirect, url_for
 import json
 from application.models import HealthVis
 from application.forms import generate_form
+from datetime import datetime, timedelta
+import logging
 
 def warmup():
     """App Engine warmup handler
@@ -54,3 +56,16 @@ def save(id):
     except:
         return render_template("500.html")
     return redirect(url_for('display', id=id))
+
+def remove_unsaved():
+    now = datetime.now()
+    objs = HealthVis.all().filter("saved =", False)
+    for obj in objs:
+        if (obj.timestamp - now) < timedelta(hours=6):
+            continue
+
+        try:
+            obj.delete()
+        except:
+            logging.info("Couldn't delete object " + str(obj))
+            continue

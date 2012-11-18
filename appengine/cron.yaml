@@ -1,0 +1,4 @@
+cron:
+- description: remove unsaved figures
+  url: /tasks/remove_unsaved
+  schedule: every 6 hours

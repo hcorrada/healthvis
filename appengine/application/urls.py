@@ -15,3 +15,6 @@ app.add_url_rule('/display/<int:id>', 'display', view_func=views.display)
 
 # save plot
 app.add_url_rule('/save/<int:id>', 'save', view_func=views.save)
+
+# remove unsaved figures that are older than 6 hours
+app.add_url_rule('/tasks/remove_unsaved', 'remove_unsaved', view_func=views.remove_unsaved)
