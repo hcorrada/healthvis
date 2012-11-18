@@ -12,11 +12,19 @@ and powered by <a href="http://d3js.org">Data Driven Documents</a></p>
 </div>
 
 <div class="row">
-<div class="span6" id="main">
+<div class="span8" id="main">
 </div>
 
-<div class="span3">
-
+<div class="span4">
+<form class="form-horizontal" action="#" id="covariate-form">
+    <fieldset>
+    {% for field in field_order %}
+       <div class="control-group">
+        <label class="control-label">{{ form[field].label }}</label>
+        <div class="controls">{{ form[field] }}</div>
+    {% endfor %}
+    </fieldset>
+</form>
 </div>
 </div>
 {% endblock %}
