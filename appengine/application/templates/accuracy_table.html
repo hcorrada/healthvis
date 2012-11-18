@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block style_block %}
+<link rel="stylesheet" type="text/css" href="/static/css/accuracy_table.css">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+<h1>{{ obj.title }}</h1>
+<p>created with the <a href="http://healthvis.org">healthvis</a> R package
+and powered by <a href="http://d3js.org">Data Driven Documents</a></p>
+</div>
+
+<div class="row">
+<div class="span6" id="main">
+</div>
+
+<div class="span3">
+
+</div>
+</div>
+{% endblock %}
+
+{% block tail_script %}
+<script src="/static/js/accuracy_table.js"></script>
+{% endblock %}
