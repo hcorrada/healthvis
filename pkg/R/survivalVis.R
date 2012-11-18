@@ -11,7 +11,7 @@
 #' and CSS code needed to generate the interactive graphic
 #' @export
 
-survivalVis <- function(cobj, data, plot.title="",plot=TRUE){
+survivalVis <- function(cobj, data, plot.title="",plot=TRUE, local=FALSE){
   
   if(class(cobj) != "coxph"){
     stop("Object not of class 'coxph'")
@@ -73,9 +73,22 @@ survivalVis <- function(cobj, data, plot.title="",plot=TRUE){
   healthvisObj$var.type <- menu.type
   healthvisObj$var.list <- var.list
   healthvisObj$plot.title <- plot.title
-  healthvisObj$page.html <- writePage(writeD3Survival(djs,c.sort,names(c.sort),vars,menu.type,day.max),
-                                writeD3SurvivalCss(),var.type=healthvisObj$var.type,
-                                var.list=healthvisObj$var.list,plot.title=healthvisObj$plot.title)
+  
+  healthvisObj$url=ifelse(local, .localURL, .gaeURL)
+  url = sprintf("%s/post_data", healthvisObj$url)
+  cat("Posting data to URL:", url, "\n")
+  
+  obj.id = RCurl::postForm(sprintf("%s/post_data", healthvisObj$url),
+                           .params=list(
+                             plottitle=healthvisObj$plot.title,
+                             plottype=healthvisObj$type,
+                             varlist=rjson::toJSON(healthvisObj$var.list),
+                             vartype=rjson::toJSON(healthvisObj$var.type),
+                             data=djs)
+  )
+  if (obj.id == "error")
+    stop("Error posting data")
+  
   if(plot){
     plot(healthvisObj)
   }

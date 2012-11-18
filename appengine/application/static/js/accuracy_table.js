@@ -116,28 +116,28 @@ var tp_bt_txt = rectDemo.append('svg:text')
     .attr('y', 350)
     .style('fill', 'deepskyblue')
     .style('font-size', 25+'px')
-    .text('There are '+250+' people with diesease who test positive.');
+    .text('There are '+250+' people with disease who test positive.');
 
 var fn_bt_txt = rectDemo.append('svg:text')
     .attr('x', 5)
     .attr('y', 380)
     .style('fill', 'orangered')
     .style('font-size', 25+'px')
-    .text('There are '+250+' people with diesease who test negative.');
+    .text('There are '+250+' people with disease who test negative.');
 
 var fp_bt_txt = rectDemo.append('svg:text')
     .attr('x', 5)
     .attr('y', 410)
     .style('fill', 'orangered')
     .style('font-size', 25+'px')
-    .text('There are '+250+' people without diesease who test positive.');
+    .text('There are '+250+' people without disease who test positive.');
 
 var tn_bt_txt = rectDemo.append('svg:text')
     .attr('x', 5)
     .attr('y', 440)
     .style('fill', 'deepskyblue')
     .style('font-size', 25+'px')
-    .text('There are '+250+' people without diesease who test negative.');
+    .text('There are '+250+' people without disease who test negative.');
 
 function font_choose(l,w){
     if(l < 10){
