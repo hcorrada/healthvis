@@ -33,34 +33,5 @@ and powered by <a href="http://d3js.org">Data Driven Documents</a></p>
 
 {% block tail_script %}
 <script src="/static/js/accuracy_table.js"></script>
-<script>
-$(document).ready(function () {
-    console.log('is this being run at all?')
-    $('#covariate-form :input').change(function () {
-        console.log('Made it to the change function')
-        if ($('#covariate-form').valid()) {
-            console.log('Is valid');
-            var newcov = $('#covariate-form').serializeArray();
-            console.dir(newcov);
-            fig_update(newcov);
-        } else {
-            console.log('Not valid')
-        }
-    });
-});
 
-$(document).ready(function() {
-    $('#covariate-form').validate({
-        rules: {
-            {% for field_name in field_names %}
-                {% set field = form[field_name] %}
-                {{ field_name }}: {
-                   required: true,
-                   range: [{{ field.min }}, {{ field.max }}]
-                },
-            {% endfor %}
-        }
-    });
-});
-</script>
 {% endblock %}

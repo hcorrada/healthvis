@@ -1,4 +1,4 @@
-from flask import render_template, request
+from flask import render_template, request, redirect, url_for
 import json
 from application.models import HealthVis
 from application.forms import generate_form
@@ -43,3 +43,14 @@ def display(id):
     else:
         return "plot type not supported"
 
+def save(id):
+    obj = HealthVis.get_by_id(id)
+    if obj is None:
+        return render_template("500.html")
+
+    obj.saved = True
+    try:
+        obj.put()
+    except:
+        return render_template("500.html")
+    return redirect(url_for('display', id=id))
