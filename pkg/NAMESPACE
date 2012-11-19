@@ -1,4 +1,1 @@
-S3method(plot,healthvis)
-export(accuracyTableVis2)
-export(listHealthVis)
-export(survivalVis)
+

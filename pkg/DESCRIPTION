@@ -20,8 +20,9 @@ Depends:
     rjson,
     survival
 Collate:
-    'survivalVis.R'
+    'AllClasses.R'
     'healthvisMethods.R'
     'accuracyTableVis.R'
+    'survivalVis.R'
     'listHealthVis.R'
     'zzz.R'
