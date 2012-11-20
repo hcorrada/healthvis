@@ -1,1 +1,9 @@
-
+export(accuracyTableVis)
+export(isServerRunning)
+export(listHealthVis)
+export(startServer)
+export(survivalVis)
+exportClasses(helathvis)
+exportMethods(initialize)
+exportMethods(plot)
+importMethodsFrom(graphics,plot)

@@ -26,3 +26,4 @@ Collate:
     'survivalVis.R'
     'listHealthVis.R'
     'zzz.R'
+    'server.R'

@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4afdb28c-6c4a-400a-a4dd-bf1b588d0bee" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../R/survivalVis.R" afterPath="$PROJECT_DIR$/../R/survivalVis.R" />
-    </list>
+    <list default="true" id="4afdb28c-6c4a-400a-a4dd-bf1b588d0bee" name="Default" comment="" />
     <ignored path="inst.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />

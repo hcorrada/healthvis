@@ -44,6 +44,9 @@ if (!isGeneric("plot"))
 #' @exportMethod plot
 setMethod("plot", signature=c("healthvis","missing"),
           function(x,y,...) {
+            if (x@url == .localURL && !healthvis::isServerRunning())
+              healthvis::startServer()
+            
             url=sprintf("%s/display/%s", x@url, x@serverID)
             cat("Opening plot at URL: ", url, "\n")
             browseURL(url)
