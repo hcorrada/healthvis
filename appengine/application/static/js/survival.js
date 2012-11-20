@@ -1,5 +1,5 @@
 function init_coefs(coef_nums, coef_names){
-    var coefs = new Array();
+    var coefs = new Array(coef_names.length);
     for(var i=0; i < coef_names.length; i++){
         coefs[coef_names[i]] = coef_nums[i];
     }
@@ -23,85 +23,111 @@ function update_hazard(data, coef, covar){
     return tmpdata;
 }
 
-var init_data = ", dat ,";
-var coef_nums = [", paste(c.sort, collapse=", ") ,"];
-var coef_names = [", paste("'", paste(c.names, collapse="', '"), "'", sep="") ,"];
-var init_vals = [", paste(rep(0, length(c.sort)), collapse=", ") ,"];
-var vlist = [", paste("'", paste(vars, collapse="', '"), "'", sep="") ,"];
-var mtype = [", paste("'", paste(menu.type, collapse="', '"), "'", sep="") ,"];
-
-// Initialize associative array of coefficients and coef names
-var coef = init_coefs(coef_nums, coef_names);
-// Initialize patient values to 0 to get baseline hazard
-var covar = init_coefs(init_vals, coef_names);
-// Initialize associative array of variable names
-var vtype = init_coefs(mtype, vlist);
-// Initialize baseline hazard function
-var data = update_hazard(init_data, coef, covar);
-
-
+// decalre global variables (not a big fan of this, but for now...)
 var w = 700;
 var h = 400;
-var colors = ['", line.col, "']; // Color of line
-
-// Scales
-var x = d3.scale.linear().domain([0,", day.max, "]).range([0, w]);
-var y = d3.scale.linear().domain([-0.2,1.1]).range([h, 0]);
 
 // Base vis layer
 var vis = d3.select('#main')
-    .append('svg:svg')
-    .attr('width', w)
-    .attr('height', h)
-    .append('svg:g')
-    .attr('transform', 'translate(' + 40 + ',' + 10 + ')');
+            .append('svg:svg')
+            .attr('width', w)
+            .attr('height', h)
+            .append('svg:g')
+            .attr('transform', 'translate(' + 40 + ',' + 10 + ')');
 
-// create xAxis
-var xAxis = d3.svg.axis().scale(x).tickSize(-h).tickSubdivide(true);
+
+// these depend on d3Params read in the d3.json call
+var init_data;
+var init_vals;
+var coef_names;
+var coef;
+var covar;
+var vtype;
+var line;
+var x,y;
+
+d3.json(param_url, function(json) {
+    d3Params=json;
+    visualizeIt();
+});
+
+function visualizeIt() {
+    init_data = JSON.parse(d3Params.data); //", dat ,";
+    var coef_nums = d3Params.csort; //[", paste(c.sort, collapse=", ") ,"];
+    coef_names = d3Params.cnames; //[", paste("'", paste(c.names, collapse="', '"), "'", sep="") ,"];
+    var vlist = d3Params.vars; //[", paste("'", paste(vars, collapse="', '"), "'", sep="") ,"];
+    var mtype = d3Params.menutype; //[", paste("'", paste(menu.type, collapse="', '"), "'", sep="") ,"];
+
+    //var init_vals = [", paste(rep(0, length(c.sort)), collapse=", ") ,"];
+    init_vals = new Array(coef_names.length);
+    for (var i=0; i<coef_names.length; i++) {
+        init_vals[coef_names[i]]=0;
+    }
+
+// Initialize associative array of coefficients and coef names
+//    var coef = init_coefs(coef_nums, coef_names);
+    coef=coef_nums;
+// Initialize patient values to 0 to get baseline hazard
+    //var covar = init_coefs(init_vals, coef_names);
+    covar=init_vals;
+// Initialize associative array of variable names
+    vtype = init_coefs(mtype, vlist);
+// Initialize baseline hazard function
+    var data = update_hazard(init_data, coef, covar);
+    var colors = [d3Params.linecol]; // Color of line
+
+// Scales
+    x = d3.scale.linear().domain([0,d3Params.daymax]).range([0, w]);
+    y = d3.scale.linear().domain([-0.2,1.1]).range([h, 0]);
+
+    // create xAxis
+    var xAxis = d3.svg.axis().scale(x).tickSize(-h).tickSubdivide(true);
 // Add the x-axis.
-vis.append('svg:g')
-    .attr('class', 'x axis')
-    .attr('transform', 'translate(0,' + h-10 + ')')
-    .call(xAxis);
+    vis.append('svg:g')
+        .attr('class', 'x axis')
+        .attr('transform', 'translate(0,' + h-10 + ')')
+        .call(xAxis);
 // create left yAxis
-var yAxisLeft = d3.svg.axis().scale(y).ticks(4).orient('left');
+    var yAxisLeft = d3.svg.axis().scale(y).ticks(4).orient('left');
 // Add the y-axis to the left
-vis.append('svg:g')
-    .attr('class', 'y axis')
-    .attr('transform', 'translate(-10,0)')
-    .call(yAxisLeft);
+    vis.append('svg:g')
+        .attr('class', 'y axis')
+        .attr('transform', 'translate(-10,0)')
+        .call(yAxisLeft);
 
 // Line drawer
-var line = d3.svg.line()
-    .x(function(d){return x(d.time);})
-    .y(function(d){return y(d.haz);})
-    .interpolate('step-after');
+    line = d3.svg.line()
+        .x(function(d){return x(d.time);})
+        .y(function(d){return y(d.haz);})
+        .interpolate('step-after');
 
 // Add path layer
+    vis.selectAll('.line')
+        .data([data])
+        .enter().append('path')
+        .attr('class', 'line')
+        .style('stroke', function(d,i){return colors[i];})
+        .attr('d', line);
 
-vis.selectAll('.line')
-    .data([data])
-    .enter().append('path')
-    .attr('class', 'line')
-    .style('stroke', function(d,i){return colors[i];})
-    .attr('d', line);
-
-vis.selectAll('circle')
-    .data(data)
-    .enter()
-    .append('svg:circle')
-    .attr('cx', function(d) { return x(d.time); })
-    .attr('cy', function(d) { return y(d.haz); })
-    .attr('r', 3)
-    .attr('opacity', 0)
-    .append('svg:title')
-    .text(function(d){return 'Day: '+d.time+'\\nSurvival: '+Math.round(d.haz*1000)/1000;});
+    vis.selectAll('circle')
+        .data(data)
+        .enter()
+        .append('svg:circle')
+        .attr('cx', function(d) { return x(d.time); })
+        .attr('cy', function(d) { return y(d.haz); })
+        .attr('r', 3)
+        .attr('opacity', 0)
+        .append('svg:title')
+        .text(function(d){return 'Day: '+d.time+'\nSurvival: '+Math.round(d.haz*1000)/1000;});
+}
 
 function update_covar(newcov){
-    covar = init_coefs(init_vals, coef_names);
+    for (var j=0; j<coef_names.length; j++) {
+        covar[coef_names[j]]=0;
+    }
     for(var j=0; j < newcov.length; j++){
         if(vtype[newcov[j].name] == 'continuous'){
-            covar[newcov[j].name] = newcov[j].value;
+            covar[newcov[j].name] = parseFloat(newcov[j].value);
         } else {
             covar[(newcov[j].name+newcov[j].value)]=1;
         }

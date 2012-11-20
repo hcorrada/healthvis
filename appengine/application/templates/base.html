@@ -79,10 +79,12 @@
             rules: {
         {% for field_name in obj.var_names %}
             {% set field = form[field_name] %}
+            {% if field.validated %}
             {{ field_name }}: {
-            required: true,
+                    required: true,
                     range: [{{ field.min }}, {{ field.max }}]
-        },
+            },
+            {% endif %}
         {% endfor %}
     }
     });

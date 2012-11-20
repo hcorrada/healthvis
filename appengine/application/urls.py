@@ -18,3 +18,6 @@ app.add_url_rule('/save/<int:id>', 'save', view_func=views.save)
 
 # remove unsaved figures that are older than 6 hours
 app.add_url_rule('/tasks/remove_unsaved', 'remove_unsaved', view_func=views.remove_unsaved)
+
+# get d3params
+app.add_url_rule('/get_params/<int:id>', 'get_params', view_func=views.get_params)

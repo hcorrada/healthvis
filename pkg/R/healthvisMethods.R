@@ -17,15 +17,15 @@ setMethod("initialize", signature=c(.Object="healthvis"),
               plottype=plotType,
               varlist=rjson::toJSON(varList),
               vartype=rjson::toJSON(varType),
-              varnames=rjson::toJSON(names(varList)))
-            
-            if (length(d3Params)>0)
-              postParams$d3Params=rjson::toJSON(d3Params)
+              varnames=rjson::toJSON(names(varList)),
+              d3Params=rjson::toJSON(d3Params))
             
             url = sprintf("%s/post_data", .Object@url)
             cat("Posting data to URL:", url, "\n")
             
             serverID = RCurl::postForm(url,.params=postParams)
+            
+            # TODO better error mechanism
             if(serverID=="error")
               stop("Error posting data to server")
             .Object@serverID=serverID

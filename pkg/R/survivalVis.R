@@ -11,7 +11,7 @@
 #' and CSS code needed to generate the interactive graphic
 #' @export
 
-survivalVis <- function(cobj, data, plot.title="",plot=TRUE, local=FALSE){
+survivalVis <- function(cobj, data, plot.title="",plot=TRUE, local=FALSE,day.max=1000,line.col="steelblue"){
   
   if(class(cobj) != "coxph"){
     stop("Object not of class 'coxph'")
@@ -60,34 +60,26 @@ survivalVis <- function(cobj, data, plot.title="",plot=TRUE, local=FALSE){
   data <- cbind(so$time, -log(so$surv))
   colnames(data) <- c("time", "haz")
   data <- apply(data, 1, as.list)
-  djs <- toJSON(data)
+  djs <- rjson::toJSON(data)
   
   c.sort <- c(cobj$coef, sapply(ref.cats, function(x){assign(x, 0)}))
   c.sort <- c.sort[sort(names(c.sort))]
   
-  # Create the healthvis object
-  healthvisObj <- list()
-  class(healthvisObj) <- "healthvis"
-  healthvisObj$type <- "survival"
+  d3Params=list(csort=c.sort,
+                cnames=names(c.sort),
+                vars=vars,
+                menutype=menu.type,
+                daymax=day.max,
+                linecol=line.col,
+                data=djs)
   
-  healthvisObj$var.type <- menu.type
-  healthvisObj$var.list <- var.list
-  healthvisObj$plot.title <- plot.title
-  
-  healthvisObj$url=ifelse(local, .localURL, .gaeURL)
-  url = sprintf("%s/post_data", healthvisObj$url)
-  cat("Posting data to URL:", url, "\n")
-  
-  obj.id = RCurl::postForm(sprintf("%s/post_data", healthvisObj$url),
-                           .params=list(
-                             plottitle=healthvisObj$plot.title,
-                             plottype=healthvisObj$type,
-                             varlist=rjson::toJSON(healthvisObj$var.list),
-                             vartype=rjson::toJSON(healthvisObj$var.type),
-                             data=djs)
-  )
-  if (obj.id == "error")
-    stop("Error posting data")
+  healthvisObj = new("healthvis", 
+                     plotType="survival",
+                     plotTitle=plot.title,
+                     varType=menu.type,
+                     varList=var.list,
+                     d3Params=d3Params,
+                     local=local)
   
   if(plot){
     plot(healthvisObj)

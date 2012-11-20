@@ -20,12 +20,14 @@ def post_data():
     var_list = request.form['varlist']
     var_type = json.loads(request.form['vartype'])
     var_names = json.loads(request.form['varnames'])
+    d3params = request.form['d3Params']
 
     obj = HealthVis(type=type,
                     title=title,
                     var_type=var_type,
+                    var_names=var_names,
                     var_list=var_list,
-                    var_names=var_names)
+                    d3params=d3params)
     try:
         obj.put()
     except:
@@ -34,6 +36,9 @@ def post_data():
 
 def display_accuracy_table(obj, form):
     return render_template("accuracy_table.html", obj=obj, form=form)
+
+def display_survival(obj, form):
+    return render_template("survival.html", obj=obj, form=form)
 
 def display(id):
     obj = HealthVis.get_by_id(id)
@@ -44,6 +49,8 @@ def display(id):
 
     if obj.type == "accuracyTable":
         return display_accuracy_table(obj, form)
+    elif obj.type == "survival":
+        return display_survival(obj, form)
     else:
         return "plot type not supported"
 
@@ -71,3 +78,9 @@ def remove_unsaved():
         except:
             logging.info("Couldn't delete object " + str(obj))
             continue
+
+def get_params(id):
+    obj = HealthVis.get_by_id(id)
+    if obj is None:
+        return render_template("500.html")
+    return obj.d3params
