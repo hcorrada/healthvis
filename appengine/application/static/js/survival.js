@@ -46,7 +46,7 @@ var vtype;
 var line;
 var x,y;
 
-d3.json(param_url, function(json) {
+d3.json(healthvisParams(), function(json) {
     d3Params=json;
     visualizeIt();
 });

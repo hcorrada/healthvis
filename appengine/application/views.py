@@ -4,6 +4,7 @@ from application.models import HealthVis
 from application.forms import generate_form
 from datetime import datetime, timedelta
 import logging
+from application.settings import supported_types
 
 def warmup():
     """App Engine warmup handler
@@ -46,13 +47,10 @@ def display(id):
         return render_template("500.html")
 
     form = generate_form(obj)
+    if obj.type not in supported_types:
+        return render_template("500.html")
 
-    if obj.type == "accuracyTable":
-        return display_accuracy_table(obj, form)
-    elif obj.type == "survival":
-        return display_survival(obj, form)
-    else:
-        return "plot type not supported"
+    return render_template("base.html", obj=obj, form=form)
 
 def save(id):
     obj = HealthVis.get_by_id(id)

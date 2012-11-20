@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
 {% block style_block %}
-<link rel="stylesheet" type="text/css" href="/static/css/accuracy_table.css">
+<link rel="stylesheet" type="text/css" href="/static/css/survival.css">
 {% endblock %}
 
 {% block tail_script %}
 <script>
-var param_url="{{ url_for('get_params', id=obj.key().id()) }}";
+function healthvisParams() { return "{{ url_for('get_params', id=obj.key().id()) }}"};
 </script>
 <script src="/static/js/survival.js"></script>
 {% endblock %}

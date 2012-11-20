@@ -3,8 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta lang="en">
-    {% block title %} <!-- plot title will go here --> {% endblock %}
+    <title>{{ obj.title }}</title>
     <link rel="stylesheet" type="text/css" href="/static/css/bootstrap-2.0.2.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/{{ obj.type }}.css">
     {% block style_block %} <!-- page-specific css here --> {% endblock %}
     <script src="/static/js/lib/modernizr-2.5.3.min.js"></script>
     {% block head_script %} <!-- defer-incompatible JS block --> {% endblock %}
@@ -60,6 +61,12 @@
 <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.10.0/jquery.validate.js"></script>
 <script src="/static/js/lib/bootstrap-2.0.3.min.js"></script>
 <script src="http://d3js.org/d3.v2.js"></script>
+
+<script>
+    function healthvisParams() { return "{{ url_for('get_params', id=obj.key().id()) }}"}
+</script>
+<script src="/static/js/{{ obj.type }}.js"></script>
+
 {% block tail_script %} <!-- defer-compatible JS block --> {% endblock %}
 
 <script>

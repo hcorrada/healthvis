@@ -9,7 +9,7 @@
 accuracyTableVis <- function(plot.title="Sensitivity/Specificity Plot",plot=TRUE,local=FALSE){
   # Create the healthvis object
   healthvisObj = new("healthvis",
-                     plotType="accuracyTable",
+                     plotType="accuracy_table",
                      plotTitle=plot.title,
                      varType=c("continuous","continuous","continuous"),
                      varList=list(Sens=c(0,1),Spec=c(0,1),Prev=c(0,1)),
