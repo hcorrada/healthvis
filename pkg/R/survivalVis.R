@@ -11,7 +11,7 @@
 #' and CSS code needed to generate the interactive graphic
 #' @export
 
-survivalVis <- function(cobj, data, plot.title="",plot=TRUE, local=FALSE,day.max=1000,line.col="steelblue"){
+survivalVis <- function(cobj, data, plot.title="",plot=TRUE, gae="remote",day.max=1000,line.col="steelblue"){
   
   if(class(cobj) != "coxph"){
     stop("Object not of class 'coxph'")
@@ -79,7 +79,7 @@ survivalVis <- function(cobj, data, plot.title="",plot=TRUE, local=FALSE,day.max
                      varType=menu.type,
                      varList=var.list,
                      d3Params=d3Params,
-                     local=local)
+                     gae=gae)
   
   if(plot){
     plot(healthvisObj)
