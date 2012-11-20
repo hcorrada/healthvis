@@ -1,6 +1,6 @@
 #' healthvis class definition
 #' 
-#' @exportClass helathvis
+#' @exportClass healthvis
 setClass("healthvis", representation=representation(
   plotType="character",
   plotTitle="character",
