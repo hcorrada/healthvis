@@ -18,13 +18,13 @@ class Query(object):
 
 class Key(object):
     def __init__(self, id):
-        self.id = id
+        self._id = id
 
     def __call__(self):
         return self
 
     def id(self):
-        return self.id
+        return self._id
 
 
 class HealthVis(object):
@@ -48,13 +48,13 @@ class HealthVis(object):
         return self.key
 
     def put(self):
-        HealthVis.store[self.key()] = self
+        HealthVis.store[self.key().id()] = self
 
     @classmethod
     def get_next_key(cls):
         curKey = cls.next_key
         cls.next_key += 1
-        return curKey
+        return Key(id=curKey)
 
     @classmethod
     def get_by_id(cls,id):

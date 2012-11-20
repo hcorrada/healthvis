@@ -3,15 +3,18 @@
 #' Posts data to server
 #'
 #' @exportMethod initialize
-setMethod("initialize", signature=c(.Object="healthvis"),
-          function(.Object, plotType, plotTitle, varType, varList, d3Params=list(),local=FALSE) {
+setMethod("initialize", signature=c("healthvis"),
+          function(.Object, plotType, plotTitle, varType, varList, d3Params=list(),gae=c("remote","local","none")) {
             .Object@plotType=plotType
             .Object@plotTitle=plotTitle
             .Object@varType=varType
             .Object@varList=varList
             .Object@d3Params=d3Params
             
-            .Object@url=ifelse(local, .localURL, .gaeURL)
+            .Object@url=switch(gae,
+                               remote=.gaeURL,
+                               local=.gaeLocalURL,
+                               none=.localURL)
             postParams=list(
               plottitle=plotTitle,
               plottype=plotType,
