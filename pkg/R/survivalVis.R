@@ -7,11 +7,12 @@
 #' @param plot.title The title of the plot to appear on the HTML page
 #' @param data The dataset used to creat the coxph object. 
 #' @param plot If TRUE a browser launches and displays the interactive graphic.
+#' @param gaeDevel use the appengine local dev server (for testing only, users should ignore)
 #' @return healthvisObj An object of class "healthvis" containing the HTML, Javascript,
 #' and CSS code needed to generate the interactive graphic
 #' @export
 
-survivalVis <- function(cobj, data, plot.title="",plot=TRUE, gae="remote",day.max=1000,line.col="steelblue"){
+survivalVis <- function(cobj, data, plot.title="",plot=TRUE, gaeDevel=FALSE,day.max=1000,line.col="steelblue"){
   
   if(class(cobj) != "coxph"){
     stop("Object not of class 'coxph'")
@@ -79,7 +80,7 @@ survivalVis <- function(cobj, data, plot.title="",plot=TRUE, gae="remote",day.ma
                      varType=menu.type,
                      varList=var.list,
                      d3Params=d3Params,
-                     gae=gae)
+                     gaeDevel=gaeDevel)
   
   if(plot){
     plot(healthvisObj)
