@@ -2,6 +2,12 @@
 #' 
 #' Posts data to server
 #'
+#' @param plotType the type of plot
+#' @param plotTitle the title of the plot
+#' @param varType a list of variable types (list contains "continuous" or "factor")
+#' @param d3Params list of parameters used in d3 script
+#' @param gae where to run the http server ("remote" on google app engine, "local" on google app engine local dev server, "none" use localhost httpd server)
+#' 
 #' @exportMethod initialize
 setMethod("initialize", signature=c("healthvis"),
           function(.Object, plotType, plotTitle, varType, varList, d3Params=list(),gae=c("remote","local","none")) {
@@ -39,6 +45,8 @@ if (!isGeneric("plot"))
   setGeneric("plot", function(x,y,...) standardGeneric("plot"))
 
 #' Plot a healthvis object
+#' 
+#' @param x the healthvis object to plot
 #' 
 #' @importMethodsFrom graphics plot
 #' @exportMethod plot
