@@ -5,6 +5,9 @@ from application.forms import generate_form
 from datetime import datetime, timedelta
 import logging
 from application.settings import supported_types
+from google.appengine.api import memcache
+from uuid import uuid4
+import re
 
 def warmup():
     """App Engine warmup handler
@@ -29,31 +32,63 @@ def post_data():
                     var_names=var_names,
                     var_list=var_list,
                     d3params=d3params)
+
+    memcache_key='hm_%d' % uuid4()
+    try:
+        res=memcache.set(key=memcache_key, value=obj)
+    except:
+        return "error"
+
+    if res:
+        return memcache_key
+
     try:
         obj.put()
     except:
         return "error"
-    return str(obj.key().id())
+    return 'hs_%d' % obj.key().id()
 
-def display_accuracy_table(obj, form):
-    return render_template("accuracy_table.html", obj=obj, form=form)
+def is_memcache_obj(id):
+    m=re.search(r"h(s|m)_(\d+)", id)
+    if m is None:
+        return False
 
-def display_survival(obj, form):
-    return render_template("survival.html", obj=obj, form=form)
+    return m.group(1) == 'm'
+
+def find_object(id):
+    # parse id to see if the object is in memcache or datastore
+    m=re.search(r"h(s|m)_(\d+)", id)
+    if m is None:
+        return None
+
+    storeid = int(m.group(2))
+    obj = None
+
+    if m.group(1) == 's':
+        # object stored in datastore
+        obj = HealthVis.get_by_id(storeid)
+    elif m.group(1) == 'm':
+        # object in memcache
+        obj = memcache.get(id)
+    else:
+        return None
+
+    return obj
 
 def display(id):
-    obj = HealthVis.get_by_id(id)
+    obj = find_object(id)
     if obj is None:
         return render_template("500.html")
-
     form = generate_form(obj)
+
+    # TODO: remove this check from local version
     if obj.type not in supported_types:
         return render_template("500.html")
 
-    return render_template("base.html", obj=obj, form=form)
+    return render_template("base.html", obj=obj, form=form, plot_id=id)
 
 def save(id):
-    obj = HealthVis.get_by_id(id)
+    obj = find_object(id)
     if obj is None:
         return render_template("500.html")
 
@@ -62,6 +97,9 @@ def save(id):
         obj.put()
     except:
         return render_template("500.html")
+
+    if is_memcache_obj(id):
+        id='hs_%d' % obj.key().id()
     return redirect(url_for('display', id=id))
 
 def remove_unsaved():
@@ -78,7 +116,7 @@ def remove_unsaved():
             continue
 
 def get_params(id):
-    obj = HealthVis.get_by_id(id)
+    obj = find_object(id)
     if obj is None:
         return render_template("500.html")
     return obj.d3params
