@@ -1,7 +1,5 @@
 export(accuracyTableVis)
-export(isServerRunning)
 export(listHealthVis)
-export(startServer)
 export(survivalVis)
 exportClasses(healthvis)
 exportMethods(initialize)
