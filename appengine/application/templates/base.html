@@ -39,6 +39,15 @@
     </div>
 
     {% block content %} <!-- main content here --> {% endblock %}
+
+    {% if not obj.saved %}
+        <a class="btn btn-primary" href=" {{ url_for('save', id=plot_id) }}">
+            <i class="icon-ok icon-white"></i>
+            Save to HealthVis
+        </a>
+    {% else  %}
+        <p>Permalink: <a href="{{ url_for('display', id=plot_id, _external=True) }}">{{ url_for('display', id=plot_id, _external=True) }}</a></p>
+    {% endif %}
 </div>
 
 <footer>
@@ -55,7 +64,7 @@
 <script src="/static/js/{{ obj.type }}.js"></script>
 
 <script>
-    healthvis.setParamsURL("{{ url_for('get_params', id=obj.key().id()) }}")
+    healthvis.setParamsURL("{{ url_for('get_params', id=plot_id) }}")
     healthvis.visualize('#main')
 </script>
 
