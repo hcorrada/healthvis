@@ -39,15 +39,6 @@
     </div>
 
     {% block content %} <!-- main content here --> {% endblock %}
-
-    {% if not obj.saved %}
-    <a class="btn btn-primary" href=" {{ url_for('save', id=plot_id) }}">
-        <i class="icon-ok icon-white"></i>
-      Save to HealthVis
-    </a>
-    {% else  %}
-    <p>Permalink: <a href="{{ url_for('display', id=plot_id, _external=True) }}">{{ url_for('display', id=plot_id, _external=True) }}</a></p>
-    {% endif %}
 </div>
 
 <footer>
@@ -60,35 +51,26 @@
 <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.10.0/jquery.validate.js"></script>
 <script src="/static/js/lib/bootstrap-2.0.3.min.js"></script>
 <script src="http://d3js.org/d3.v2.js"></script>
+<script src="/static/js/healthvis.js"></script>
+<script src="/static/js/{{ obj.type }}.js"></script>
 
 <script>
-    function healthvisParams() { return "{{ url_for('get_params', id=plot_id) }}"}
+    healthvis.setParamsURL("{{ url_for('get_params', id=obj.key().id()) }}")
+    healthvis.visualize('#main')
 </script>
-<script src="/static/js/{{ obj.type }}.js"></script>
 
 {% block tail_script %} <!-- defer-compatible JS block --> {% endblock %}
 
 <script>
-    $(document).ready(function () {
-        $('#covariate-form :input').change(function () {
-            if ($('#covariate-form').valid()) {
-                var newcov = $('#covariate-form').serializeArray();
-                fig_update(newcov);
-            } else {
-                console.log('Not valid')
-            }
-        });
-    });
-
     $(document).ready(function() {
         $('#covariate-form').validate({
             rules: {
         {% for field_name in obj.var_names %}
             {% set field = form[field_name] %}
             {% if field.validated %}
-            {{ field_name }}: {
-                    required: true,
-                    range: [{{ field.min }}, {{ field.max }}]
+                {{ field_name }}: {
+                required: true,
+                        range: [{{ field.min }}, {{ field.max }}]
             },
             {% endif %}
         {% endfor %}
