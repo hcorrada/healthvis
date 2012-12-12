@@ -10,14 +10,18 @@
 #' 
 #' @exportMethod initialize
 setMethod("initialize", signature=c("healthvis"),
-          function(.Object, plotType, plotTitle, varType, varList, d3Params=list(),gaeDevel=FALSE) {
+          function(.Object, plotType, plotTitle, varType, varList, d3Params=list(),gaeDevel=FALSE,url=NULL) {
             .Object@plotType=plotType
             .Object@plotTitle=plotTitle
             .Object@varType=varType
             .Object@varList=varList
             .Object@d3Params=d3Params
             
-            .Object@url=if (gaeDevel) .gaeDevelURL else .gaeURL
+            if (is.null(url)) {
+              .Object@url=if (gaeDevel) .gaeDevelURL else .gaeURL
+            } else {
+              .Object@url=url
+            }
             
             postParams=list(
               plottitle=plotTitle,

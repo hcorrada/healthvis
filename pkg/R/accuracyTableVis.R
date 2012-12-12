@@ -7,14 +7,15 @@
 #' @param gaeDevel use appengine local dev server (for testing only, users should ignore)
 #' @export
 #' 
-accuracyTableVis <- function(plot.title="Sensitivity/Specificity Plot",plot=TRUE,gaeDevel=FALSE){
+accuracyTableVis <- function(plot.title="Sensitivity/Specificity Plot",plot=TRUE,gaeDevel=FALSE,url=NULL){
   # Create the healthvis object
   healthvisObj = new("healthvis",
                      plotType="accuracy_table",
                      plotTitle=plot.title,
                      varType=c("continuous","continuous","continuous"),
                      varList=list(Sens=c(0,1),Spec=c(0,1),Prev=c(0,1)),
-                     gaeDevel=gaeDevel)
+                     gaeDevel=gaeDevel,
+                     url=url)
   
   if (plot)
     plot(healthvisObj)
