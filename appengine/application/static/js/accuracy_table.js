@@ -39,7 +39,7 @@ function HealthvisAccuracyTable() {
             .attr('y', 5)
             .attr('height', 142.5)
             .attr('width', 342.5)
-            .style('fill', 'yellow'); //CHANGED THIS COLOR AS A TEST
+            .style('fill', 'deepskyblue');
 
         this.tp_txt = this.rectDemo.append('svg:text')
             .attr('x', 342.5/2+5) // width/2 + 5
