@@ -1,0 +1,6 @@
+{%  extends "base.html" %}
+
+{% block content_tail %}
+Open in healthvis: <a href="{{ url_for('display', id=plot_id, _external=True) }}">{{ url_for('display', id=plot_id, _external=True) }}</a>
+{% endblock content_tail %}
+

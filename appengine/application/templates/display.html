@@ -1,0 +1,48 @@
+{%  extends "base.html" %}
+
+{% block content_tail %}
+{% if not obj.saved %}
+    <a class="btn btn-primary" href=" {{ url_for('save', id=plot_id) }}">
+        <i class="icon-ok icon-white"></i>
+        Save to HealthVis
+    </a>
+{% else  %}
+    <p>Permalink: <a href="{{ url_for('display', id=plot_id, _external=True) }}">{{ url_for('display', id=plot_id, _external=True) }}</a></p>
+    <button type="button" class="btn" data-toggle="collapse" data-target="#embedurl">Embed</button>
+    <div id="embedurl" class="collapse">{{ '<iframe width="560" height="315" src="' + url_for('embed', id=plot_id, _external=True) + '" frameborder="0"></iframe>' }}</div>
+{% endif %}
+{% endblock content_tail %}
+
+
+
+
+{% block tail_script %}
+<script>
+    function fnDeSelect() {
+        if (document.selection) document.selection.empty();
+        else if (window.getSelection) window.getSelection().removeAllRanges();
+    }
+
+    function fnSelect(objid) {
+        fnDeSelect();
+        if (document.selection) {
+            var range = document.body.createTextRange();
+            range.moveToElementText(document.getElementById(objid));
+            range.select();
+        } else if (window.getSelection) {
+            var range = document.createRange();
+            range.selectNode(document.getElementById(objid));
+            window.getSelection().addRange(range);
+        }
+    }
+
+
+    $('#embedurl').on('show', function() {
+        fnSelect('embedurl');
+    });
+
+    $('#embedurl').on('hide', function() {
+        fnDeSelect();
+    })
+</script>
+{% endblock tail_script%}
