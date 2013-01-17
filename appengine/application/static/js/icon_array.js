@@ -1,11 +1,10 @@
 function HealthvisIconArray() {
 
     this.grid = null;
-    this.color = null;
     this.color_array = null;
     this.init_color = null;
     this.group_colors = null;
-    this.covar = null;
+    this.formdata = [];
 
     this.y = d3.scale.linear().domain([0,100]).range([490,10]);
 
@@ -18,7 +17,7 @@ function HealthvisIconArray() {
 	    .attr('class', 'chart');
 
 	this.color_array = d3Params.color_array;
-	this.init_color = this.color_array[0];
+	this.init_color = this.color_array.slice(0);
 	this.group_colors = d3Params.group_colors;
 
         this.data = [];
@@ -67,7 +66,7 @@ function HealthvisIconArray() {
                  .attr('y', function(d) { return d.y; })
                  .attr('width', function(d) { return d.width; })
                  .attr('height', function(d) { return d.height; })
-		 .style('fill', function(d) { return d.color; });
+		 .style('fill', function(d,i) { return d.color; });
 	
 	var yAxis = d3.svg.axis().scale(this.y).ticks(10).orient('left');
 	
@@ -78,16 +77,35 @@ function HealthvisIconArray() {
 
     };
 
-    this.update_covar = function(newcov){
+
+    this.update = function(formdata) {
         for (var j=0; j<this.group_colors.length; j++) {
-            this.covar[j] = parseFloat(newcov[j].value);
+            this.formdata[j] = parseFloat(formdata[j].value);
         }
-    };
+	
+	
+	var sum=0;
+	var col_tmp = this.init_color.slice(0);
 
+	for(var k = 0; k < this.formdata.length; k++){
+		for(var m = sum; m < (sum + this.formdata[k]); m++){
+			col_tmp[m] = this.group_colors[k];
+		}
+		sum += this.formdata[k];		
+	}
 
-    this.update = function(newcov) {
-	this.update_covar(newcov);
-	alert(this.covar);
+	this.color_array = col_tmp.reverse();
+
+	var count=0;
+	for(var i=0; i < 10; i++){
+		for(var j=0; j <10; j++){
+			this.data[i][j].color = this.color_array[count];
+			count += 1;
+		}
+	}
+
+	this.col.transition().style('fill', function(d) { return d.color; });
+	
     };
 }
 
