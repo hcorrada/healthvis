@@ -16,4 +16,4 @@ CSRF_SESSION_KEY = SESSION_KEY
 CSRF_ENABLED = True
 
 # app configuration goes here
-supported_types = ['accuracy_table', 'survival']
+supported_types = ['accuracy_table', 'survival', 'icon_array']

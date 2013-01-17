@@ -1,41 +1,61 @@
 function HealthvisIconArray() {
 
-    this.rectDemo = null;
+    this.grid = null;
+    this.color = null;
+    this.color_array = null;
+    this.init_color = null;
+    this.group_colors = null;
+    this.covar = null;
+
+    this.y = d3.scale.linear().domain([0,100]).range([490,10]);
+
 
     this.init = function(elementId, d3Params) {
         this.grid = d3.select('#main')
-            .append('svg:svg')
+            .append('svg')
             .attr('width', 700)
             .attr('height', 500)
 	    .attr('class', 'chart');
-	
-	var data = [];
 
-	var cellWidth = 59;
-	var cellHeight = 39;
-	var start = 10;
-	var xpos = start;
-	var ypos = start;
-	var xBuffer = 69;
-	Var yBuffer = 49;
+	this.color_array = d3Params.color_array;
+	this.init_color = this.color_array[0];
+	this.group_colors = d3Params.group_colors;
 
-	for(var i=0; i < 10; i++){
-	    for(var j=0; k < 10; j++){
-	    	data[i].push({
-			      width: cellWidth,
-			      height: cellHeight,
-			      x: xpos,
-			      y: ypos,
-			    });
-		xpos += xBuffer;
-	}
-	xpos = start;
-	ypos += yBuffer;
-    }
+        this.data = [];
+
+        var cellWidth = 50;
+        var cellHeight = 39;
+        var start = 10;
+        var xpos = start+25;
+        var ypos = start;
+        var xBuffer = 60;
+        var yBuffer = 49;
+        var count = 0;
+
+        for(var i=0; i < 10; i++){
+	    this.data.push(new Array());
+     	    for(var j=0; j < 10; j++){
+	        this.data[i].push({
+		    width: cellWidth,
+		    height: cellHeight,
+    		    x: xpos,
+		    y: ypos,
+		    color: this.color_array[count]
+		});
+  	        xpos += xBuffer;
+	        count += 1;
+     	    }
+           xpos = start+25;
+           ypos += yBuffer;
+        }
+
+
+     };
 
     this.visualize = function() {
-        this.row = grid.selectAll('.row')
-                  .data(data)
+
+        this.row = this.grid.selectAll('.row')
+                  .data(this.data)
                 .enter().append('svg:g')
                   .attr('class', 'row');
 
@@ -47,13 +67,28 @@ function HealthvisIconArray() {
                  .attr('y', function(d) { return d.y; })
                  .attr('width', function(d) { return d.width; })
                  .attr('height', function(d) { return d.height; })
-		 .style('fill', gray)
+		 .style('fill', function(d) { return d.color; });
+	
+	var yAxis = d3.svg.axis().scale(this.y).ticks(10).orient('left');
+	
+	this.grid.append('svg:g')
+                .attr('class', 'y axis')
+                .attr('transform', 'translate(30,0)')
+                .call(yAxis);
 
-    }
+    };
+
+    this.update_covar = function(newcov){
+        for (var j=0; j<this.group_colors.length; j++) {
+            this.covar[j] = parseFloat(newcov[j].value);
+        }
+    };
+
 
     this.update = function(newcov) {
-	
-    }
+	this.update_covar(newcov);
+	alert(this.covar);
+    };
 }
 
 healthvis.register(new HealthvisIconArray());

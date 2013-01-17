@@ -7,10 +7,14 @@
 #' @param gaeDevel use appengine local dev server (for testing only, users should ignore)
 #' @export
 #' 
-iconArrayVis <- function(groups=2, plot.title="Icon Array",plot=TRUE,gaeDevel=FALSE,url=NULL){
+iconArrayVis <- function(groups=2, colors=c("deepskyblue", "orangered"),init.color="lightgray", plot.title="Icon Array",plot=TRUE,gaeDevel=FALSE,url=NULL){
 
   if(groups <= 0 | groups >=5){
 	stop("Must have between 1 and 5 groups.")
+  }
+
+  if(length(colors) != groups){
+	stop("Number of colors does not match number of groups.")
   }
 
   gr <- 1:groups
@@ -18,12 +22,16 @@ iconArrayVis <- function(groups=2, plot.title="Icon Array",plot=TRUE,gaeDevel=FA
   gr.l <- rep(list(c(0,100)), groups)
   names(gr.l) <- names
 
+  d3Params=list(color_array=rep(init.color, 100),
+		    group_colors=colors)
+
   # Create the healthvis object
   healthvisObj = new("healthvis",
                      plotType="icon_array",
                      plotTitle=plot.title,
                      varType=rep("continuous", groups),
                      varList=gr.l,
+			   d3Params=d3Params,
                      gaeDevel=gaeDevel,
                      url=url)
   
