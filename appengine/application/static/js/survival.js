@@ -40,12 +40,13 @@ function HealthvisSurvival() {
     this.line=null;
     this.x=null;
     this.y=null;
+    this.group_names=null;
 
     this.init = function(elementId, d3Params) {
         this.vis = d3.select(elementId)
             .append('svg:svg')
             .attr('width', this.w)
-            .attr('height', this.h)
+            .attr('height', this.h+30)
             .append('svg:g')
             .attr('transform', 'translate(' + 40 + ',' + 10 + ')');
 
@@ -68,6 +69,8 @@ function HealthvisSurvival() {
         this.covar=this.init_vals;
         // Initialize associative array of variable names
         this.vtype = init_coefs(mtype, vlist);
+
+	this.group_names=d3Params.group_names;
 
         // line color
         this.colors = d3Params.linecol;
@@ -93,6 +96,12 @@ function HealthvisSurvival() {
                 .attr('transform', 'translate(0,' + (this.h-30) + ')')
                 .call(xAxis);
 
+	this.vis.append('text')
+		.attr('class', 'x label')
+		.attr('x', this.w/2-12)
+		.attr('y', this.h+10)
+		.text('Time');
+
         // create left yAxis
         var yAxis = d3.svg.axis().scale(this.y).ticks(6).orient('left');
 
@@ -101,6 +110,16 @@ function HealthvisSurvival() {
                 .attr('class', 'y axis')
                 .attr('transform', 'translate(-5,0)')
                 .call(yAxis);
+
+	this.vis.append('text')
+		.attr('class', 'y label')
+		.attr('x', -200)
+		.attr('y', -30)
+//		.attr('transform', 'rotate(-90,-5,'+ (this.h/2-12)/2+')')
+		.attr('transform', 'rotate(-90)')
+		.text('Survival');
+
+        var colors = this.colors;
 
         // Line drawer
         var x = this.x;
@@ -111,14 +130,37 @@ function HealthvisSurvival() {
                           .interpolate('step-after');
 
         // Add path layer
-        var colors = this.colors;
-	//var colors = ['red', 'blue'];
         this.vis.selectAll('.line')
                 .data([data1, data2])
                 .enter().append('path')
                  .attr('class', 'line')
 		 .style('stroke', function(d,i){return colors[i];})
                  .attr('d', this.line);
+
+	// Add legend
+	var legend = this.vis.append('g')
+		  .attr('class', 'legend')
+		  .attr('x', this.w - 165)
+		  .attr('y', 125)
+		  .attr('height', 200)
+		  .attr('width', 200);
+
+	legend.selectAll('rect')
+	   .data(colors).enter().append('rect')
+	  .attr('x', this.w - 165)
+	  .attr('y', function(d,i){return i*20;})
+	  .attr('width', 10)
+	  .attr('height', 10)
+	  .style('fill', function(d) { return d; });
+
+	var group_names = this.group_names;
+
+	legend.selectAll('text')
+	   .data(group_names).enter().append('text')
+	  .attr('x', this.w - 145)
+	  .attr('y', function(d,i){return i*20 + 10;})
+	  .text(function(d) { return d; });
+
 
   // This is for mouseover, not sure if necessary
 

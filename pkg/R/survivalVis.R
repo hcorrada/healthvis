@@ -13,7 +13,7 @@
 #' and CSS code needed to generate the interactive graphic
 #' @export
 
-survivalVis <- function(cobj, data, group, plot.title="",plot=TRUE, gaeDevel=FALSE,url=NULL,day.max=1000,line.col=c("steelblue", "red")){
+survivalVis <- function(cobj, data, group, group_names=c("Group 1", "Group 2"), plot.title="",plot=TRUE, gaeDevel=FALSE,url=NULL,day.max=1000,line.col=c("steelblue", "red")){
   
   if(class(cobj) != "coxph"){
     stop("Object not of class 'coxph'")
@@ -33,6 +33,10 @@ survivalVis <- function(cobj, data, group, plot.title="",plot=TRUE, gaeDevel=FAL
 
   if(length(levels(data[[group]])) != 2){
 	stop("We currently only support two-level subgroup analysis for factor variables")
+  }
+
+  if(length(group_names) != 2){
+	stop("Number of group names does not match number of groups.")
   }
   
   day.max <- max(data[[all.vars(formula[[2]])[1]]]) # This might need to be updated
@@ -84,6 +88,7 @@ survivalVis <- function(cobj, data, group, plot.title="",plot=TRUE, gaeDevel=FAL
                 menutype=menu.type,
                 daymax=day.max,
                 linecol=line.col,
+		    group_names=group_names,
                 data1=djs.1,
 		    data2=djs.2)
   
