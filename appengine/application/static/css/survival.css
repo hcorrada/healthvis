@@ -3,28 +3,14 @@
     stroke-width: ", line.size ,"px;
     fill: none;
 }
-.axis {
+.axis path,
+.axis line {
+    fill: none;
+    stroke: black;
     shape-rendering: crispEdges;
 }
 
-.x.axis line {
-    stroke: lightgrey;
-}
-
-.x.axis .minor {
-    stroke-opacity: .5;
-}
-
-.x.axis path {
-    display: none;
-}
-
-.y.axis line {
-    stroke: lightgrey;
-}
-
-.y.axis path {
-//fill: none;
-    stroke: #000;
-    stroke-width: ", axis.size ,"px;
+.axis text {
+    font-family: sans-serif;
+    font-size: 12px;
 }

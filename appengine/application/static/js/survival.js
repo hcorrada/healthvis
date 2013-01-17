@@ -30,7 +30,8 @@ function HealthvisSurvival() {
     // Base vis layer
     this.vis = null;
 
-    this.init_data=null;
+    this.init_data1=null;
+    this.init_data2=null;
     this.init_vals=null;
     this.coef_names=null;
     this.coef=null;
@@ -48,7 +49,8 @@ function HealthvisSurvival() {
             .append('svg:g')
             .attr('transform', 'translate(' + 40 + ',' + 10 + ')');
 
-        this.init_data = JSON.parse(d3Params.data); //", dat ,";
+        this.init_data1 = JSON.parse(d3Params.data1); //", dat ,";
+        this.init_data2 = JSON.parse(d3Params.data2);
         var coef_nums = d3Params.csort; //[", paste(c.sort, collapse=", ") ,"];
         this.coef_names = d3Params.cnames; //[", paste("'", paste(c.names, collapse="', '"), "'", sep="") ,"];
         var vlist = d3Params.vars; //[", paste("'", paste(vars, collapse="', '"), "'", sep="") ,"];
@@ -68,36 +70,37 @@ function HealthvisSurvival() {
         this.vtype = init_coefs(mtype, vlist);
 
         // line color
-        this.colors = [d3Params.linecol];
+        this.colors = d3Params.linecol;
 
         // scales
         this.x = d3.scale.linear().domain([0,d3Params.daymax]).range([0, this.w]);
-        this.y = d3.scale.linear().domain([-0.2,1.1]).range([this.h, 0]);
+        this.y = d3.scale.linear().domain([-0.1,1]).range([this.h, 0]);
     };
 
     this.visualize = function() {
 
         // Initialize baseline hazard function
-        var data = update_hazard(this.init_data, this.coef, this.covar);
+        var data1 = update_hazard(this.init_data1, this.coef, this.covar);
+        var data2 = update_hazard(this.init_data2, this.coef, this.covar);
 
 
         // create xAxis
-        var xAxis = d3.svg.axis().scale(this.x).tickSize(-this.h).tickSubdivide(true);
+        var xAxis = d3.svg.axis().scale(this.x).orient('bottom');
 
         // Add the x-axis.
         this.vis.append('svg:g')
                 .attr('class', 'x axis')
-                .attr('transform', 'translate(0,' + this.h-10 + ')')
+                .attr('transform', 'translate(0,' + (this.h-30) + ')')
                 .call(xAxis);
 
         // create left yAxis
-        var yAxisLeft = d3.svg.axis().scale(this.y).ticks(4).orient('left');
+        var yAxis = d3.svg.axis().scale(this.y).ticks(6).orient('left');
 
         // Add the y-axis to the left
         this.vis.append('svg:g')
                 .attr('class', 'y axis')
-                .attr('transform', 'translate(-10,0)')
-                .call(yAxisLeft);
+                .attr('transform', 'translate(-5,0)')
+                .call(yAxis);
 
         // Line drawer
         var x = this.x;
@@ -109,24 +112,28 @@ function HealthvisSurvival() {
 
         // Add path layer
         var colors = this.colors;
+	//var colors = ['red', 'blue'];
         this.vis.selectAll('.line')
-                .data([data])
+                .data([data1, data2])
                 .enter().append('path')
                  .attr('class', 'line')
-                 .style('stroke', function(d,i){return colors[i];})
+		 .style('stroke', function(d,i){return colors[i];})
                  .attr('d', this.line);
 
+  // This is for mouseover, not sure if necessary
 
-        this.vis.selectAll('circle')
-            .data(data)
-            .enter()
-            .append('svg:circle')
-            .attr('cx', function(d) { return x(d.time); })
-            .attr('cy', function(d) { return y(d.haz); })
-            .attr('r', 3)
-            .attr('opacity', 0)
-            .append('svg:title')
-            .text(function(d){return 'Day: '+d.time+'\nSurvival: '+Math.round(d.haz*1000)/1000;});
+  //      this.vis.selectAll('circle')
+  //          .data(data1)
+  //          .enter()
+  //          .append('svg:circle')
+  //          .attr('cx', function(d) { return x(d.time); })
+  //          .attr('cy', function(d) { return y(d.haz); })
+  //          .attr('r', 3)
+  //          .attr('opacity', 0)
+  //          .append('svg:title')
+  //          .text(function(d){return 'Day: '+d.time+'\nSurvival: '+Math.round(d.haz*1000)/1000;});
+
+	
     }
 
     this.update_covar = function(newcov){
@@ -146,22 +153,23 @@ function HealthvisSurvival() {
     this.update = function(newcov) {
         this.update_covar(newcov);
 
-        var tmp = update_hazard(this.init_data, this.coef, this.covar);
+        var tmp1 = update_hazard(this.init_data1, this.coef, this.covar);
+        var tmp2 = update_hazard(this.init_data2, this.coef, this.covar);
         this.vis.selectAll('path.line')
-            .data([tmp])
+            .data([tmp1, tmp2])
             .transition().duration(1800).delay(100).ease('elastic')
             .attr('width', 0)
             .attr('d', this.line);
 
         var x = this.x;
         var y = this.y;
-        this.vis.selectAll('circle')
-            .data(tmp)
-            .transition().duration(1800).delay(100).ease('elastic')
-            .attr('cx', function(d) { return x(d.time); })
-            .attr('cy', function(d) { return y(d.haz); })
-            .attr('r', 3)
-            .attr('opacity', 0)
+      //  this.vis.selectAll('circle')
+      //      .data(tmp)
+      //      .transition().duration(1800).delay(100).ease('elastic')
+      //      .attr('cx', function(d) { return x(d.time); })
+      //      .attr('cy', function(d) { return y(d.haz); })
+      //      .attr('r', 3)
+      //      .attr('opacity', 0)
     }
 }
 

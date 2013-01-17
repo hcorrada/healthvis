@@ -6,13 +6,14 @@
 #' @param cobj An object created with a call to \code{\link{coxph}}
 #' @param plot.title The title of the plot to appear on the HTML page
 #' @param data The dataset used to creat the coxph object. 
+#' @param group The covariate on which to group (must be 2-level for now)
 #' @param plot If TRUE a browser launches and displays the interactive graphic.
 #' @param gaeDevel use the appengine local dev server (for testing only, users should ignore)
 #' @return healthvisObj An object of class "healthvis" containing the HTML, Javascript,
 #' and CSS code needed to generate the interactive graphic
 #' @export
 
-survivalVis <- function(cobj, data, plot.title="",plot=TRUE, gaeDevel=FALSE,url=NULL,day.max=1000,line.col="steelblue"){
+survivalVis <- function(cobj, data, group, plot.title="",plot=TRUE, gaeDevel=FALSE,url=NULL,day.max=1000,line.col=c("steelblue", "red")){
   
   if(class(cobj) != "coxph"){
     stop("Object not of class 'coxph'")
@@ -23,6 +24,16 @@ survivalVis <- function(cobj, data, plot.title="",plot=TRUE, gaeDevel=FALSE,url=
   formula <- cobj$formula
   
   vars <- all.vars(formula[[3]]) # This is a list of all variables on RHS
+
+  if(!(group %in% vars)){
+	stop("Grouping variable not in dataset")
+  }
+		
+  vars <- setdiff(vars, group) # Remove grouping cat from variables for form
+
+  if(length(levels(data[[group]])) != 2){
+	stop("We currently only support two-level subgroup analysis for factor variables")
+  }
   
   day.max <- max(data[[all.vars(formula[[2]])[1]]]) # This might need to be updated
   
@@ -55,14 +66,15 @@ survivalVis <- function(cobj, data, plot.title="",plot=TRUE, gaeDevel=FALSE,url=
   
   ds <- tmp.data[1,] # Take the first row of data
   ds <- baseline(ds)
-  so <- survfit(cobj, newdata=ds)
-  
-  dt <- coxph.detail(cobj)
-  data <- cbind(so$time, -log(so$surv))
-  colnames(data) <- c("time", "haz")
-  data <- apply(data, 1, as.list)
-  djs <- rjson::toJSON(data)
-  
+  ds.1 <- ds	   # Here, we create baselines that differ only by grouplevel
+  ds[[group]] <- levels(ds[[group]])[2]
+  ds.2 <- ds
+  so.1 <- survfit(cobj, newdata=ds.1)
+  so.2 <- survfit(cobj, newdata=ds.2)
+
+  djs.1 <- data_assign(so.1)
+  djs.2 <- data_assign(so.2)
+ 
   c.sort <- c(cobj$coef, sapply(ref.cats, function(x){assign(x, 0)}))
   c.sort <- c.sort[sort(names(c.sort))]
   
@@ -72,7 +84,8 @@ survivalVis <- function(cobj, data, plot.title="",plot=TRUE, gaeDevel=FALSE,url=
                 menutype=menu.type,
                 daymax=day.max,
                 linecol=line.col,
-                data=djs)
+                data1=djs.1,
+		    data2=djs.2)
   
   healthvisObj = new("healthvis", 
                      plotType="survival",
@@ -99,4 +112,11 @@ baseline <- function(ds){
     }
   }
   ds
+}
+
+data_assign <- function(so){
+  data <- cbind(so$time, -log(so$surv))
+  colnames(data) <- c("time", "haz")
+  data <- apply(data, 1, as.list)
+  rjson::toJSON(data)
 }
