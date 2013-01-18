@@ -4,6 +4,7 @@ function HealthvisIconArray() {
     this.color_array = null;
     this.init_color = null;
     this.group_colors = null;
+    this.group_names = null;
     this.formdata = [];
 
     this.y = d3.scale.linear().domain([0,100]).range([490,10]);
@@ -19,15 +20,16 @@ function HealthvisIconArray() {
 	this.color_array = d3Params.color_array;
 	this.init_color = this.color_array.slice(0);
 	this.group_colors = d3Params.group_colors;
+	this.group_names = d3Params.group_names;
 
         this.data = [];
 
-        var cellWidth = 50;
+        var cellWidth = 30;
         var cellHeight = 39;
         var start = 10;
         var xpos = start+25;
         var ypos = start;
-        var xBuffer = 60;
+        var xBuffer = 40;
         var yBuffer = 49;
         var count = 0;
 
@@ -74,6 +76,31 @@ function HealthvisIconArray() {
                 .attr('class', 'y axis')
                 .attr('transform', 'translate(30,0)')
                 .call(yAxis);
+
+	// Add legend
+
+	var legend = this.grid.append('g')
+		  .attr('class', 'legend')
+		  .attr('x', 700 - 240)
+		  .attr('y', 125)
+		  .attr('height', 200)
+		  .attr('width', 200);
+
+	legend.selectAll('rect')
+	   .data(this.group_colors).enter().append('rect')
+	  .attr('x', 700 - 240)
+	  .attr('y', function(d,i){return i*20+100;})
+	  .attr('width', 10)
+	  .attr('height', 10)
+	  .style('fill', function(d) { return d; });
+
+	var group_names = this.group_names;
+
+	legend.selectAll('text')
+	   .data(this.group_names).enter().append('text')
+	  .attr('x', 700 - 220)
+	  .attr('y', function(d,i){return i*20 + 110;})
+	  .text(function(d) { return d; });
 
     };
 
