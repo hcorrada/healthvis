@@ -21,6 +21,20 @@ function HealthvisIconArray() {
 	this.init_color = this.color_array.slice(0);
 	this.group_colors = d3Params.group_colors;
 	this.group_names = d3Params.group_names;
+	this.init_covars = d3Params.init_covars;
+	this.rows = d3Params.rows;
+	this.cols = d3Params.cols;
+
+	this.c_tmp = d3Params.coefs;
+
+	// Make a 2-D array so we can loop through and get probabilities for each category
+	var coefs = new Array(this.cols);
+	for(var i=0; i < this.cols; i++){
+		coefs[i] = new Array(this.rows);
+		for(var j=0; j < this.rows; j++){
+			coefs[i][j] = this.c_tmp[i*this.rows+j];
+		}
+	}
 
         this.data = [];
 

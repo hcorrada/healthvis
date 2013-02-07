@@ -1,6 +1,7 @@
 export(accuracyTableVis)
 export(listHealthVis)
 export(survivalVis)
+export(iconArrayVis)
 exportClasses(healthvis)
 exportMethods(initialize)
 exportMethods(plot)
