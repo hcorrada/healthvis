@@ -1,3 +1,56 @@
+function init_covar(cats){
+	var covar = new Array(cats.length);
+
+	for(var i = 0; i < cats.length; i++){	
+		if(cats[i] == "(Intercept)"){
+			covar[cats[i]] = 1;
+		} else {
+			covar[cats[i]] = 0;
+		}
+	}
+	
+	return covar;
+}
+
+function update_covar(covar, coef, len, rows, cols){
+	var tmp_pct = new Array(len);
+	var pct_tot = 0;
+	var tot = 0;
+	var keys = Object.keys(covar);
+
+	// Get the total for the denominator
+	for(var i=0; i < rows; i++){
+		var subtot1 = 0;
+		var k = 0;
+		for(var j=0; j < cols; j++){
+			subtot1 = subtot1 + coef[j][i]*covar[keys[k]];			
+			k++;
+		}
+		tot = tot + Math.exp(subtot1);
+	}
+
+	// Do each one
+	for(var i=0; i < rows; i++){
+		var subtot2 = 0;
+		var m = 0;
+		for(var j=0; j < cols; j++){
+			subtot2 = subtot2 + coef[j][i]*covar[keys[m]];
+			m++;
+		}
+
+		tmp_pct[i+1] = Math.exp(subtot2)/(1+tot); // Skip the baseline for now
+		pct_tot = pct_tot + tmp_pct[i+1];
+	}
+
+	tmp_pct[0] = 1 - pct_tot;
+
+	for(var q=0; q < tmp_pct.length; q++){
+		tmp_pct[q] = Math.round(tmp_pct[q]*100);
+	}
+
+	return tmp_pct;
+}
+
 function HealthvisIconArray() {
 
     this.grid = null;
@@ -9,7 +62,6 @@ function HealthvisIconArray() {
 
     this.y = d3.scale.linear().domain([0,100]).range([490,10]);
 
-
     this.init = function(elementId, d3Params) {
         this.grid = d3.select('#main')
             .append('svg')
@@ -17,13 +69,22 @@ function HealthvisIconArray() {
             .attr('height', 500)
 	    .attr('class', 'chart');
 
+	this.flag = d3Params.obj_flag;
 	this.color_array = d3Params.color_array;
 	this.init_color = this.color_array.slice(0);
 	this.group_colors = d3Params.group_colors;
 	this.group_names = d3Params.group_names;
-	this.init_covars = d3Params.init_covars;
 	this.rows = d3Params.rows;
 	this.cols = d3Params.cols;
+	this.cats = d3Params.cats;
+	this.vtype = d3Params.vtype;
+
+	this.pcts = new Array(this.rows+1); // Add 1 for the baseline category (asumed to be this.pcts[0])
+
+	this.covar = init_covar(this.cats);
+	
+	//this.ref_cats = d3Params.ref_cats;
+
 
 	this.c_tmp = d3Params.coefs;
 
@@ -35,6 +96,8 @@ function HealthvisIconArray() {
 			coefs[i][j] = this.c_tmp[i*this.rows+j];
 		}
 	}
+
+	this.coefs = coefs;
 
         this.data = [];
 
@@ -120,19 +183,37 @@ function HealthvisIconArray() {
 
 
     this.update = function(formdata) {
-        for (var j=0; j<this.group_colors.length; j++) {
-            this.formdata[j] = parseFloat(formdata[j].value);
-        }
-	
-	
+	if(this.obj_flag == 0){	
+		for (var j=0; j<this.group_colors.length; j++) {
+			this.formdata[j] = parseFloat(formdata[j].value);
+		}
+		var nums = this.formdata;
+
+	} else {
+		this.covar = init_covar(this.cats); // Reset everything
+		
+		// Set the covariates correctly
+		for (var j=0; j<formdata.length; j++) {
+			if(this.vtype[j] == "factor"){
+				this.covar[(formdata[j].name+formdata[j].value)] = 1;
+			} else {
+				this.covar[formdata[j].name] = parseFloat(formdata[j].value);
+			}
+		}
+		
+		this.pcts = update_covar(this.covar, this.coefs, this.pcts.length, this.rows, this.cols);
+
+		var nums = this.pcts;
+	}
+
 	var sum=0;
 	var col_tmp = this.init_color.slice(0);
 
-	for(var k = 0; k < this.formdata.length; k++){
-		for(var m = sum; m < (sum + this.formdata[k]); m++){
+	for(var k = 0; k < nums.length; k++){
+		for(var m = sum; m < (sum + nums[k]); m++){
 			col_tmp[m] = this.group_colors[k];
 		}
-		sum += this.formdata[k];		
+		sum += nums[k];		
 	}
 
 	this.color_array = col_tmp.reverse();
