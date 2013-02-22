@@ -106,8 +106,9 @@ iconArrayVis <- function(mobj=NULL, data=NULL, groups=2, group.names=c("Group1",
                      gaeDevel=gaeDevel,
                      url=url)
   
-  if (plot)
+  if(plot){
     plot(healthvisObj)
+  }
   
   return(healthvisObj)
 } 
