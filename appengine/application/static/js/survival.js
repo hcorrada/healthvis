@@ -8,17 +8,24 @@ function init_coefs(coef_nums, coef_names) {
 }
 
 // Updates hazard function by multiplying each coefficient by its new value
-// We need a function that updates the covariate array when a change is made to the form
+
 function update_hazard(data, coef, covar) {
-    var tmpdata = JSON.parse(JSON.stringify(data));
+    var tmpdata = new Array(data.length);
+
     var xb = 0;
 
     for(key in coef){
-        xb = xb + coef[key]*covar[key];
+	xb = xb + coef[key]*covar[key];
     }
+
     var prop = Math.exp(xb);
-    for(var j=0; j < data.length; j++){
-        tmpdata[j].haz = Math.exp(-data[j].haz*prop);
+
+    for(var i=0; i < tmpdata.length; i++){
+	var l_tmp = JSON.parse(JSON.stringify(data[i]));
+	for(var j=0; j < l_tmp.length; j++){
+		l_tmp[j].haz = Math.exp(-data[i][j].haz*prop);
+	    }
+	tmpdata[i] = l_tmp;
     }
     return tmpdata;
 }
@@ -50,14 +57,12 @@ function HealthvisSurvival() {
             .append('svg:g')
             .attr('transform', 'translate(' + 40 + ',' + 10 + ')');
 
-        this.init_data1 = JSON.parse(d3Params.data1); //", dat ,";
-        this.init_data2 = JSON.parse(d3Params.data2);
-        var coef_nums = d3Params.csort; //[", paste(c.sort, collapse=", ") ,"];
-        this.coef_names = d3Params.cnames; //[", paste("'", paste(c.names, collapse="', '"), "'", sep="") ,"];
-        var vlist = d3Params.vars; //[", paste("'", paste(vars, collapse="', '"), "'", sep="") ,"];
-        var mtype = d3Params.menutype; //[", paste("'", paste(menu.type, collapse="', '"), "'", sep="") ,"];
+        this.init_data = JSON.parse(d3Params.data);
+        var coef_nums = d3Params.csort;
+        this.coef_names = d3Params.cnames;
+        var vlist = d3Params.vars;
+        var mtype = d3Params.menutype;
 
-        //var init_vals = [", paste(rep(0, length(c.sort)), collapse=", ") ,"];
         this.init_vals = new Array(this.coef_names.length);
         for (var i=0; i < this.coef_names.length; i++) {
             this.init_vals[this.coef_names[i]]=0;
@@ -83,9 +88,7 @@ function HealthvisSurvival() {
     this.visualize = function() {
 
         // Initialize baseline hazard function
-        var data1 = update_hazard(this.init_data1, this.coef, this.covar);
-        var data2 = update_hazard(this.init_data2, this.coef, this.covar);
-
+        var data = update_hazard(this.init_data, this.coef, this.covar);
 
         // create xAxis
         var xAxis = d3.svg.axis().scale(this.x).orient('bottom');
@@ -115,11 +118,14 @@ function HealthvisSurvival() {
 		.attr('class', 'y label')
 		.attr('x', -200)
 		.attr('y', -30)
-//		.attr('transform', 'rotate(-90,-5,'+ (this.h/2-12)/2+')')
 		.attr('transform', 'rotate(-90)')
 		.text('Survival');
-
-        var colors = this.colors;
+	
+	if(typeof this.colors == "string"){
+	        var colors = [this.colors];
+	} else {
+		var colors = this.colors;
+	}
 
         // Line drawer
         var x = this.x;
@@ -131,35 +137,39 @@ function HealthvisSurvival() {
 
         // Add path layer
         this.vis.selectAll('.line')
-                .data([data1, data2])
+                .data(data)
                 .enter().append('path')
                  .attr('class', 'line')
 		 .style('stroke', function(d,i){return colors[i];})
                  .attr('d', this.line);
 
-	// Add legend
-	var legend = this.vis.append('g')
-		  .attr('class', 'legend')
-		  .attr('x', this.w - 165)
-		  .attr('y', 125)
-		  .attr('height', 200)
-		  .attr('width', 200);
-
-	legend.selectAll('rect')
-	   .data(colors).enter().append('rect')
-	  .attr('x', this.w - 165)
-	  .attr('y', function(d,i){return i*20;})
-	  .attr('width', 10)
-	  .attr('height', 10)
-	  .style('fill', function(d) { return d; });
+	// Add legend, if there are groups
 
 	var group_names = this.group_names;
+	
+	if(!(group_names == "")){
+		var legend = this.vis.append('g')
+			  .attr('class', 'legend')
+			  .attr('x', this.w - 165)
+			  .attr('y', 125)
+			  .attr('height', 200)
+			  .attr('width', 200);
 
-	legend.selectAll('text')
-	   .data(group_names).enter().append('text')
-	  .attr('x', this.w - 145)
-	  .attr('y', function(d,i){return i*20 + 10;})
-	  .text(function(d) { return d; });
+		legend.selectAll('rect')
+		   .data(colors).enter().append('rect')
+		  .attr('x', this.w - 165)
+		  .attr('y', function(d,i){return i*20;})
+		  .attr('width', 10)
+		  .attr('height', 10)
+		  .style('fill', function(d) { return d; });
+
+
+		legend.selectAll('text')
+		   .data(group_names).enter().append('text')
+		  .attr('x', this.w - 145)
+		  .attr('y', function(d,i){return i*20 + 10;})
+		  .text(function(d) { return d; });
+	}
 
 
   // This is for mouseover, not sure if necessary
@@ -176,11 +186,11 @@ function HealthvisSurvival() {
   //          .text(function(d){return 'Day: '+d.time+'\nSurvival: '+Math.round(d.haz*1000)/1000;});
 
 	
-    }
+    };
 
     this.update_covar = function(newcov){
-        for (var j=0; j<this.coef_names.length; j++) {
-            this.covar[this.coef_names[j]]=0;
+        for (var i=0; i<this.coef_names.length; i++) {
+            this.covar[this.coef_names[i]]=0;
         }
 
         for(var j=0; j < newcov.length; j++){
@@ -190,21 +200,22 @@ function HealthvisSurvival() {
                 this.covar[(newcov[j].name+newcov[j].value)]=1;
             }
         }
-    }
+    };
 
     this.update = function(newcov) {
         this.update_covar(newcov);
 
-        var tmp1 = update_hazard(this.init_data1, this.coef, this.covar);
-        var tmp2 = update_hazard(this.init_data2, this.coef, this.covar);
+        var tmp = update_hazard(this.init_data, this.coef, this.covar);
         this.vis.selectAll('path.line')
-            .data([tmp1, tmp2])
+            .data(tmp)
             .transition().duration(1800).delay(100).ease('elastic')
             .attr('width', 0)
             .attr('d', this.line);
 
         var x = this.x;
         var y = this.y;
+
+      //  MOUSEOVER - DISABLED
       //  this.vis.selectAll('circle')
       //      .data(tmp)
       //      .transition().duration(1800).delay(100).ease('elastic')
@@ -212,7 +223,7 @@ function HealthvisSurvival() {
       //      .attr('cy', function(d) { return y(d.haz); })
       //      .attr('r', 3)
       //      .attr('opacity', 0)
-    }
+    };
 }
 
 healthvis.register(new HealthvisSurvival());

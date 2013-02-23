@@ -4,39 +4,35 @@
 #' 
 #'
 #' @param cobj An object created with a call to \code{\link{coxph}}
-#' @param plot.title The title of the plot to appear on the HTML page
 #' @param data The dataset used to creat the coxph object. 
-#' @param group The covariate on which to group (must be 2-level for now)
+#' @param group The covariate in model by which to group. If NULL, no grouping.
+#' @param group.names Names of groups to appear on legend. Default empty string for no grouping.
+#' @param line.col Vector of names of colors to use for each group. Length must equal number of groups. Default single string for no grouping.
+#' @param plot.title The title of the plot to appear on the HTML page
 #' @param plot If TRUE a browser launches and displays the interactive graphic.
 #' @param gaeDevel use the appengine local dev server (for testing only, users should ignore)
 #' @return healthvisObj An object of class "healthvis" containing the HTML, Javascript,
 #' and CSS code needed to generate the interactive graphic
 #' @export
 
-survivalVis <- function(cobj, data, group, group_names=c("Group 1", "Group 2"), plot.title="",plot=TRUE, gaeDevel=FALSE,url=NULL,day.max=1000,line.col=c("steelblue", "red")){
+survivalVis <- function(cobj, data, group=NULL, group.names="", line.col="deepskyblue", plot.title="Survival Plot",plot=TRUE, gaeDevel=FALSE,url=NULL,day.max=1000){
   
   if(class(cobj) != "coxph"){
     stop("Object not of class 'coxph'")
   }
-  
+
   tmp.data <- data # In case we have to modify
   
   formula <- cobj$formula
   
   vars <- all.vars(formula[[3]]) # This is a list of all variables on RHS
 
-  if(!(group %in% vars)){
-	stop("Grouping variable not in dataset")
-  }
-		
-  vars <- setdiff(vars, group) # Remove grouping cat from variables for form
+  if(!is.null(group)){
+	  if(!(group %in% vars)){
+		stop("Grouping variable not in dataset")
+	  }
 
-  if(length(levels(data[[group]])) != 2){
-	stop("We currently only support two-level subgroup analysis for factor variables")
-  }
-
-  if(length(group_names) != 2){
-	stop("Number of group names does not match number of groups.")
+	  vars <- setdiff(vars, group) # Remove grouping cat from variables for form
   }
   
   day.max <- max(data[[all.vars(formula[[2]])[1]]]) # This might need to be updated
@@ -64,21 +60,43 @@ survivalVis <- function(cobj, data, group, group_names=c("Group 1", "Group 2"), 
       }
       menu.type[i] <- "factor"
       var.list[[vars[i]]] <- levels(cur)
-      ref.cats <- c(ref.cats, paste(vars[i], levels(cur)[1], sep=""))
+      ref.cats <- c(ref.cats, paste(vars[i], levels(cur)[1]))
     }
   }
-  
-  ds <- tmp.data[1,] # Take the first row of data
-  ds <- baseline(ds)
-  ds.1 <- ds	   # Here, we create baselines that differ only by grouplevel
-  ds[[group]] <- levels(ds[[group]])[2]
-  ds.2 <- ds
-  so.1 <- survfit(cobj, newdata=ds.1)
-  so.2 <- survfit(cobj, newdata=ds.2)
 
-  djs.1 <- data_assign(so.1)
-  djs.2 <- data_assign(so.2)
+  if(is.null(group)){
+
+	 ds <- tmp.data[1,] # Take the first row of data
+	 ds <- baseline(ds)
+	 so <- survfit(cobj, newdata=ds)
+
+ 	 djs <- data_assign(so)
  
+  } else {
+	  cat(vars)
+	  glen <- length(levels(data[[group]]))
+
+	  if(length(group.names) != glen){
+		stop("Number of group names does not match number of groups.")
+	  }
+
+	  if(length(line.col) != glen){
+		stop("Number of line colors does not match number of groups.")
+	  }
+
+	  djs <- vector("character", glen)
+	  for(i in 1:glen){
+		ds <- tmp.data[1,]
+		ds <- baseline(ds)
+		ds[[group]] <- levels(ds[[group]])[i]
+		so <- survfit(cobj, newdata=ds)
+		djs[i] <- data_assign(so)
+	  }
+
+  }
+
+  djs <- paste("[", paste(djs, collapse=","), "]")
+  
   c.sort <- c(cobj$coef, sapply(ref.cats, function(x){assign(x, 0)}))
   c.sort <- c.sort[sort(names(c.sort))]
   
@@ -88,9 +106,8 @@ survivalVis <- function(cobj, data, group, group_names=c("Group 1", "Group 2"), 
                 menutype=menu.type,
                 daymax=day.max,
                 linecol=line.col,
-		    group_names=group_names,
-                data1=djs.1,
-		    data2=djs.2)
+		    group_names=group.names,
+                data=djs)
   
   healthvisObj = new("healthvis", 
                      plotType="survival",
@@ -104,8 +121,8 @@ survivalVis <- function(cobj, data, group, group_names=c("Group 1", "Group 2"), 
   if(plot){
     plot(healthvisObj)
   }
-  return(healthvisObj)
 
+  return(healthvisObj)
 }
 
 baseline <- function(ds){
