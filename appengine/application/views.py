@@ -23,7 +23,15 @@ def post_data():
     type = request.form['plottype']
     var_list = request.form['varlist']
     var_type = json.loads(request.form['vartype'])
+    # ensure var_type is a list
+    if isinstance(var_type, basestring):
+        var_type = [var_type]
+
     var_names = json.loads(request.form['varnames'])
+    # ensure var_names is a list
+    if isinstance(var_names, basestring):
+        var_names = [var_names]
+
     d3params = request.form['d3Params']
 
     obj = HealthVis(type=type,

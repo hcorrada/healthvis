@@ -3,7 +3,7 @@
   <component name="ProjectResources">
     <default-html-doctype>$APPLICATION_HOME_DIR$/lib/pycharm.jar!/resources/html5-schema/html5.rnc</default-html-doctype>
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 2.7.3 (/opt/local/Library/Frameworks/Python.framework/Versions/2.7/bin/python2.7)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 2.7.3 (/usr/local/Cellar/python/2.7.3/Frameworks/Python.framework/Versions/2.7/bin/python2.7)" project-jdk-type="Python SDK" />
   <component name="SvnBranchConfigurationManager">
     <option name="mySupportsUserInfoFilter" value="true" />
   </component>
