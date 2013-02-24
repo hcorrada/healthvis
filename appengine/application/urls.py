@@ -13,6 +13,9 @@ app.add_url_rule('/post_data', 'post_data', view_func=views.post_data, methods=[
 # display plot
 app.add_url_rule('/display/<string:id>', 'display', view_func=views.display)
 
+# display plot in embedabble format
+app.add_url_rule('/embed/<string:id>', 'embed', view_func=views.embed)
+
 # save plot
 app.add_url_rule('/save/<string:id>', 'save', view_func=views.save)
 

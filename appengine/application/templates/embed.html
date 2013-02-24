@@ -1,0 +1,40 @@
+{%  extends "base.html" %}
+
+{% block header_block %}
+    <div>
+        <h3>{{ obj.title }}</h3>
+        <small>
+        <p> created with the <a href="http://healthvis.org">healthvis</a> R package
+            and powered by <a href="http://d3js.org">Data Driven Documents</a><br>
+        open in healthvis: <a href="{{ url_for('display', id=plot_id, _external=True) }}" target="new">{{ url_for('display', id=plot_id, _external=True) }}</a>
+        </p>
+        </small>
+    </div>
+{% endblock %}
+
+{% block plot_block %}
+        <div id="main">
+        </div>
+
+    <div class="row">
+    <div class="span2">
+    <button type="button" class="btn btn-small" data-toggle="collapse" data-target="#covariate-form">Toggle form</button>
+    </div>
+    <div class="span10">
+            <form class="form-horizontal collapse" action="#" id="covariate-form">
+                <fieldset>
+                    {% for field_name in obj.var_names %}
+                        {% set field = form[field_name] %}
+                        <div class="control-group">
+                            <label class="control-label">{{ field_name }}</label>
+                            <div class="controls">{{ field|safe }}</div>
+                        </div>
+                    {% endfor %}
+                </fieldset>
+            </form>
+    </div>
+{% endblock %}
+
+{% block content_tail %}
+{% endblock content_tail %}
+

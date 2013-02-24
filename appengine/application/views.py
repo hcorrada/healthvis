@@ -93,7 +93,19 @@ def display(id):
     if obj.type not in supported_types:
         return render_template("500.html")
 
-    return render_template("base.html", obj=obj, form=form, plot_id=id)
+    return render_template("display.html", obj=obj, form=form, plot_id=id)
+
+def embed(id):
+    obj = find_object(id)
+    if obj is None:
+        return render_template("500.html")
+    form = generate_form(obj)
+
+    # TODO: remove this check from local version
+    if obj.type not in supported_types:
+        return render_template("500.html")
+
+    return render_template("embed.html", obj=obj, form=form, plot_id=id)
 
 def save(id):
     obj = find_object(id)

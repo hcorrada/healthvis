@@ -13,41 +13,10 @@
 
 <body>
 <div class="container" id="maincontent">
-    <div class="page-header">
-        <h1>{{ obj.title }}</h1>
-        <p>created with the <a href="http://healthvis.org">healthvis</a> R package
-            and powered by <a href="http://d3js.org">Data Driven Documents</a></p>
-    </div>
+    {%  block header_block %} <!-- header goes in here -->{% endblock %}
+    {%  block plot_block %} <!-- plot goes in here --> {% endblock %}
+    {% block content_tail %} <!-- plot tail goes in here -->{% endblock content_tail %}
 
-    <div class="row">
-        <div class="span8" id="main">
-        </div>
-
-        <div class="span4">
-            <form class="form-horizontal" action="#" id="covariate-form">
-                <fieldset>
-                    {% for field_name in obj.var_names %}
-                        {% set field = form[field_name] %}
-                        <div class="control-group">
-                            <label class="control-label">{{ field_name }}</label>
-                            <div class="controls">{{ field|safe }}</div>
-                        </div>
-                    {% endfor %}
-                </fieldset>
-            </form>
-        </div>
-    </div>
-
-    {% block content %} <!-- main content here --> {% endblock %}
-
-    {% if not obj.saved %}
-        <a class="btn btn-primary" href=" {{ url_for('save', id=plot_id) }}">
-            <i class="icon-ok icon-white"></i>
-            Save to HealthVis
-        </a>
-    {% else  %}
-        <p>Permalink: <a href="{{ url_for('display', id=plot_id, _external=True) }}">{{ url_for('display', id=plot_id, _external=True) }}</a></p>
-    {% endif %}
 </div>
 
 <footer>
@@ -83,9 +52,36 @@
             },
             {% endif %}
         {% endfor %}
+            }
+        });
+    });
+
+    function fnDeSelect() {
+        if (document.selection) document.selection.empty();
+        else if (window.getSelection) window.getSelection().removeAllRanges();
     }
+
+    function fnSelect(objid) {
+        fnDeSelect();
+        if (document.selection) {
+            var range = document.body.createTextRange();
+            range.moveToElementText(document.getElementById(objid));
+            range.select();
+        } else if (window.getSelection) {
+            var range = document.createRange();
+            range.selectNode(document.getElementById(objid));
+            window.getSelection().addRange(range);
+        }
+    }
+
+
+    $('#embedurl').on('show', function() {
+        fnSelect('embedurl');
     });
-    });
+
+    $('#embedurl').on('hide', function() {
+        fnDeSelect();
+    })
 </script>
 </body>
 </html>
