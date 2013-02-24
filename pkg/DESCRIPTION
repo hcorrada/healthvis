@@ -1,6 +1,6 @@
 Package: healthvis
-Maintainer: Jeffrey T. Leek
-    <jtleek@gmail.com>
+Maintainer: Prasad Patil
+    <prpatil@jhsph.edu>
 Author: Jeffrey T. Leek <jtleek@gmail.com>, Prasad Patil<prpatil@jhsph.edu>
 Version: 1.0
 License: GPL-3
@@ -24,5 +24,6 @@ Collate:
     'healthvisMethods.R'
     'accuracyTableVis.R'
     'survivalVis.R'
+    'iconArrayVis
     'listHealthVis.R'
     'zzz.R'
