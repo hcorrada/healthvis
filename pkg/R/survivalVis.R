@@ -74,7 +74,9 @@ survivalVis <- function(cobj, data, group=NULL, group.names="", line.col="deepsk
  
   } else {
 	  cat(vars)
-	  glen <- length(levels(data[[group]]))
+    lvls <- unique(data[[group]])
+	  #glen <- length(levels(data[[group]]))
+    glen <- length(lvls)
 
 	  if(length(group.names) != glen){
 		stop("Number of group names does not match number of groups.")
@@ -88,7 +90,8 @@ survivalVis <- function(cobj, data, group=NULL, group.names="", line.col="deepsk
 	  for(i in 1:glen){
 		ds <- tmp.data[1,]
 		ds <- baseline(ds)
-		ds[[group]] <- levels(ds[[group]])[i]
+		#ds[[group]] <- levels(ds[[group]])[i]
+    ds[[group]] <- lvls[i]
 		so <- survfit(cobj, newdata=ds)
 		djs[i] <- data_assign(so)
 	  }
