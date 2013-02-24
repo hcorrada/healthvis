@@ -1,132 +1,200 @@
-function HealthvisHeatmap() {
-	
-    this.width=700;
-    this.height=500;
+function colorize(v, median, colors){
+
+	var colorScale = d3.scale.linear()
+	     .domain([Math.min.apply(Math, v), median, Math.max.apply(Math, v)])
+	     .range([colors[0], colors[1], colors[2]]);
+
+	return(colorScale)
+}
+
+function HealthvisHeatmap() {	
+    this.width=650;
+    this.height=450;
+    this.buffer=50;
     this.formdata = [];
+    this.input = null;
     this.data = null;
     this.rownames = null;
     this.colnames = null;
+    this.ord_input = null;
+    this.ordnames = null;
     this.ordering = null;
     this.colors = null;
-
-    this.y = d3.scale.linear().domain([0,100]).range([490,10]);
+    this.nsubj = null;
+    this.nobs = null;
+    this.ncov = null;
+    this.medians = null;
+    this.heatcol = null;
+    this.heatrow = null;
+    this.init_rank = null;
 
     this.init = function(elementId, d3Params) {
         this.grid = d3.select('#main')
             .append('svg')
-            .attr('width', this.width)
-            .attr('height', this.height)
+            .attr('width', this.width+this.buffer)
+            .attr('height', this.height+this.buffer)
 	    .attr('class', 'chart');
 
-	this.data = d3Params.data;
-	alert(this.data);
+	this.input = d3Params.data;
 	this.rownames = d3Params.rownames;
 	this.colnames = d3Params.colnames;
-	this.ordering = d3Params.ordering;
+	this.ord_input = d3Params.ordering;
+	this.ordnames = d3Params.ordnames;
 	this.colors = d3Params.colors;
+	this.nsubj = d3Params.nsubj;
+	this.nobs = d3Params.nobs;
+	this.ncov = d3Params.ncov;
+	this.medians = d3Params.medians; // Median of each column
+
+
+	this.data = new Array(this.nobs);
+	this.ordering = new Array(this.ncov);
+	this.heatcol = new Array()
+
+	// Make 2-D array of subjects by observations (for heatmap)
+	for(var i=0; i < this.nobs; i++){
+		this.data[i] = new Array(this.nsubj);
+		for(var j=0; j < this.nsubj; j++){
+			this.data[i][j] = this.input[i*this.nsubj+j];	
+		}
+	}
+
+	// Make a 2-D array of heat colors, xpos, ypos
+
+	this.boxw = this.width/this.data.length;
+	this.boxh = this.height/this.data[0].length;
+
+
+	var x=this.buffer;
+	
+	var curScale = null;
+
+
+
+	// Get positions for boxes as well as colors (BY COLUMN)
+	for(i=0; i < this.nobs; i++){
+		curScale = colorize(this.data[i], this.medians[i], this.colors);
+		this.heatcol.push(new Array());
+		for(j=0; j < this.nsubj; j++){
+			this.heatcol[i].push({
+					    xpos: x,
+			  		    ypos: j,
+					    color: curScale(this.data[i][j]),
+					    });
+		}
+		x+=this.boxw;
+	}
+
+
+	// Now make it row-wise so we can move rows
+
+	this.heatrow = new Array(this.nsubj);
+	for(i=0; i < this.nsubj; i++){
+		this.heatrow[i] = new Array(this.nobs);
+		for(j=0; j < this.nobs; j++){
+			this.heatrow[i][j] = this.heatcol[j][i];	
+		}
+	}
+
+	// Make 2-D associative array of subjects by covariates (for reordering)
+	for(i=0; i < this.ordnames.length; i++){
+		this.ordering[this.ordnames[i]] = new Array(this.ncov);
+		for(j=0; j < this.nsubj; j++){
+			// -1 so that the indices match up
+			this.ordering[this.ordnames[i]][j] = this.ord_input[i*this.nsubj+j]-1;	
+		}
+	}	
+
+	var y = this.buffer;
+
+	this.init_rank = new Array(this.nsubj);
+	this.true_pos = new Array(this.nsubj);
+	for(i=0; i < this.nsubj; i++){
+		this.init_rank[i] = i;
+		this.true_pos[i] = y;
+		y+=this.boxh;
+	}
 
      };
 
     this.visualize = function() {
 	
-	this.xrange = d3.scale.ordinal().rangeBands([0,this.width]);
-	this.yrange = d3.scale.ordinal().rangeBands([0,this.height]);
+	var cn = this.colnames;
+	var rn = this.rownames;
+	var buff = this.buffer;
+	var boxw = this.boxw;
+	var boxh = this.boxh;
 
-        this.col = this.grid.selectAll('.col')
-                  .data(this.data)
-                .enter().append('svg:g')
-                  .attr('class', 'col');
+	var roff = this.nsubj/10;
+	var coff = this.nobs/2;
 
-	this.row = this.col.selectAll('.row')
-		       .data(function(d){return d;})
-		       .enter().append('svg:rect')
-		       .attr('class', 'row')
-                       .attr('x', function(d) { return d.x; })
-                       .attr('y', function(d) { return d.y; })
-                       .attr('width', function(d) { return d.width; })
-                       .attr('height', function(d) { return d.height; })
-		       .style('fill', function(d,i) { return d.color; });		       
-	
-	var yAxis = d3.svg.axis().scale(this.y).ticks(10).orient('left');
-	
-	this.grid.append('svg:g')
-                .attr('class', 'y axis')
-                .attr('transform', 'translate(30,0)')
-                .call(yAxis);
+	var ymap = d3.scale.ordinal().domain(this.init_rank).range(this.true_pos);
+	var rmap = d3.scale.ordinal().domain(this.init_rank).range(rn);
 
-	// Add legend
+	this.col = this.grid.selectAll(".column")
+			   .data(this.heatcol)
+			   .enter().append("svg:g")
+			   .attr("class", "column");
 
-	var legend = this.grid.append('g')
-		  .attr('class', 'legend')
-		  .attr('x', 700 - 240)
-		  .attr('y', 125)
-		  .attr('height', 200)
-		  .attr('width', 200);
+	this.row = this.grid.selectAll(".row")
+			    .data(this.heatrow)
+			    .enter().append("svg:g")
+			    .attr("class", "row");
 
-	legend.selectAll('rect')
-	   .data(this.group_colors).enter().append('rect')
-	  .attr('x', 700 - 240)
-	  .attr('y', function(d,i){return i*20+100;})
-	  .attr('width', 10)
-	  .attr('height', 10)
-	  .style('fill', function(d) { return d; });
 
-	var group_names = this.group_names;
+	this.col.append("text")
+		.attr("x", function(d,i){return i*boxw+buff+boxw/2.5;})
+		.attr("y", this.buffer-20)
+		.attr("dy", ".7em")
+		.attr("text-anchor", "start")
+		.attr("transform", function(d,i){return "rotate(-90," + (i*boxw+buff+boxw/2.5) + "," + (buff-20) +")";})
+		.text(function(d,i){return cn[i];})
+		.style("font-size", 8+"px");
 
-	legend.selectAll('text')
-	   .data(this.group_names).enter().append('text')
-	  .attr('x', 700 - 220)
-	  .attr('y', function(d,i){return i*20 + 110;})
-	  .text(function(d) { return d; });
+
+	this.rtext = this.row.append("text")
+		.attr("x", this.buffer-10)
+		.attr("y", function(d,i){return i*boxh+buff+boxh/5;})
+		.attr("dy", ".7em")
+		.attr("text-anchor", "end")
+		.text(function(d,i){return rmap(i);})
+		.style("font-size", 8+"px");
+
+
+	this.cells = this.row.selectAll(".cell")
+			    .data(function(d){return d;})
+			    .enter().append("svg:rect")
+			    .attr("class", "cell")
+			    .attr("x", function(d){return d.xpos;})
+			    .attr("y", function(d){return ymap(d.ypos);})
+			    .attr("width", this.boxw)
+			    .attr("height", this.boxh)
+			    .style("fill", function(d){return d.color;})
+			    .style("stroke", "#555");
 
     };
 
 
     this.update = function(formdata) {
-	if(this.obj_flag == 0){	
-		for (var j=0; j<this.group_colors.length; j++) {
-			this.formdata[j] = parseFloat(formdata[j].value);
-		}
-		var nums = this.formdata;
-
+	var val = formdata[0].value;
+	var ymap_new = null;
+	var rnames = this.rownames;
+	var cur_ord = null;
+	
+	if(val == "None"){
+		cur_ord = this.init_rank;
+		ymap_new = d3.scale.ordinal().domain(this.init_rank).range(this.true_pos);
 	} else {
-		this.covar = init_covar(this.cats); // Reset everything
-		
-		// Set the covariates correctly
-		for (var j=0; j<formdata.length; j++) {
-			if(this.vtype[j] == "factor"){
-				this.covar[(formdata[j].name+formdata[j].value)] = 1;
-			} else {
-				this.covar[formdata[j].name] = parseFloat(formdata[j].value);
-			}
-		}
-		
-		this.pcts = update_covar(this.covar, this.coefs, this.pcts.length, this.rows, this.cols);
-
-		var nums = this.pcts;
+		cur_ord = this.ordering[val]
+		ymap_new = d3.scale.ordinal().domain(cur_ord).range(this.true_pos);
 	}
 
-	var sum=0;
-	var col_tmp = this.init_color.slice(0);
+	var t = this.grid.transition().duration(2000);
+	
+	t.selectAll(".row")
+		.selectAll(".cell").attr("y", function(d){return ymap_new(d.ypos);});
 
-	for(var k = 0; k < nums.length; k++){
-		for(var m = sum; m < (sum + nums[k]); m++){
-			col_tmp[m] = this.group_colors[k];
-		}
-		sum += nums[k];		
-	}
-
-	this.color_array = col_tmp.reverse();
-
-	var count=0;
-	for(var i=0; i < 10; i++){
-		for(var j=0; j <10; j++){
-			this.data[i][j].color = this.color_array[count];
-			count += 1;
-		}
-	}
-
-	this.col.transition().style('fill', function(d) { return d.color; });
+	this.rtext.transition().delay(1800).text(function(d,i){return rnames[cur_ord[i]];});
 	
     };
 }

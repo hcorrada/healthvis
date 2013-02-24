@@ -32,7 +32,6 @@ heatmapVis <- function(data, sort.by, colors = heat_hcl(3), plot.title="Heatmap 
 
 	ordering <- apply(sort.by, 2, order) # Gets ordering for each outcome
 
-
 	if(is.null(rownames(data))){
 		rownames <- 1:nrow(data)
 	} else {
@@ -46,19 +45,28 @@ heatmapVis <- function(data, sort.by, colors = heat_hcl(3), plot.title="Heatmap 
 		colnames <- colnames(data)
 	}
 	
-	vlist <- list("Sortby"=colnames(sort.by))
+	#vlist <- list("Sort By"=c("None", colnames(sort.by)), "Junk"=c("A", "B"))
+	vlist <- list("Sort By"=c("None", colnames(sort.by)))
+	medians <- apply(data, 2, median)
+	names(medians) <- NULL
 
 	d3Params=list(data=data,
 		    rownames=rownames,
 		    colnames=colnames,
 		    ordering=ordering,
-		    colors=colors)
+		    ordnames=colnames(sort.by),
+		    colors=colors,
+		    nsubj=nrow(data),
+		    nobs=ncol(data),
+		    ncov=ncol(ordering),
+		    medians=medians)
 
 	# Create the healthvis object
 	healthvisObj = new("healthvis",
                      plotType="heatmap",
                      plotTitle=plot.title,
-                     varType="factor",
+#                     varType=c("factor", "factor"),
+			   varType="factor",
                      varList=vlist,
 			   d3Params=d3Params,
                      gaeDevel=gaeDevel,
