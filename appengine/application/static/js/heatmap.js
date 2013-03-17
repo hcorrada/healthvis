@@ -1,3 +1,8 @@
+// This function will take a set of 3 "increasing" colors and
+// return a color scale that fills in intensities between the 
+// colors. For use in turning each column of the observation
+// matrix into a heatmap.
+
 function colorize(v, median, colors){
 
 	var colorScale = d3.scale.linear()
@@ -69,8 +74,6 @@ function HealthvisHeatmap() {
 	
 	var curScale = null;
 
-
-
 	// Get positions for boxes as well as colors (BY COLUMN)
 	for(i=0; i < this.nobs; i++){
 		curScale = colorize(this.data[i], this.medians[i], this.colors);
@@ -86,7 +89,7 @@ function HealthvisHeatmap() {
 	}
 
 
-	// Now make it row-wise so we can move rows
+	// Now make it row-wise so we can move rows - we will use this!
 
 	this.heatrow = new Array(this.nsubj);
 	for(i=0; i < this.nsubj; i++){
@@ -100,13 +103,14 @@ function HealthvisHeatmap() {
 	for(i=0; i < this.ordnames.length; i++){
 		this.ordering[this.ordnames[i]] = new Array(this.ncov);
 		for(j=0; j < this.nsubj; j++){
-			// -1 so that the indices match up
+			// -1 so that the indices match up (R starts at 1)
 			this.ordering[this.ordnames[i]][j] = this.ord_input[i*this.nsubj+j]-1;	
 		}
 	}	
 
 	var y = this.buffer;
 
+	// Creat an initial ranking for the unsorted data
 	this.init_rank = new Array(this.nsubj);
 	this.true_pos = new Array(this.nsubj);
 	for(i=0; i < this.nsubj; i++){
@@ -125,6 +129,7 @@ function HealthvisHeatmap() {
 	var boxw = this.boxw;
 	var boxh = this.boxh;
 
+	// These are rough - change when we have a better way of setting plot dimensions
 	var roff = this.nsubj/10;
 	var coff = this.nobs/2;
 
@@ -141,7 +146,7 @@ function HealthvisHeatmap() {
 			    .enter().append("svg:g")
 			    .attr("class", "row");
 
-
+	// Change the 2.5 and 20 - they are rough and hardcoded
 	this.col.append("text")
 		.attr("x", function(d,i){return i*boxw+buff+boxw/2.5;})
 		.attr("y", this.buffer-20)
@@ -176,11 +181,14 @@ function HealthvisHeatmap() {
 
 
     this.update = function(formdata) {
+	// Always take [0] because there is only one input
 	var val = formdata[0].value;
 	var ymap_new = null;
 	var rnames = this.rownames;
 	var cur_ord = null;
 	
+	// Makes new ordinal scales based on selection. In the future, make scales for
+	// all options first, then keep them in an assoc array and just choose!
 	if(val == "None"){
 		cur_ord = this.init_rank;
 		ymap_new = d3.scale.ordinal().domain(this.init_rank).range(this.true_pos);
@@ -191,9 +199,11 @@ function HealthvisHeatmap() {
 
 	var t = this.grid.transition().duration(2000);
 	
+	// Remaps the row position
 	t.selectAll(".row")
 		.selectAll(".cell").attr("y", function(d){return ymap_new(d.ypos);});
 
+	// Remaps row labels
 	this.rtext.transition().delay(1800).text(function(d,i){return rnames[cur_ord[i]];});
 	
     };

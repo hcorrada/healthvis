@@ -1,3 +1,7 @@
+// Create an initial set of covariates
+// where everything is set to 0 except
+// for the intercept.
+
 function init_covar(cats){
 	var covar = new Array(cats.length);
 
@@ -11,6 +15,11 @@ function init_covar(cats){
 	
 	return covar;
 }
+
+// This is an implementation of the estimation of
+// response probabilities for a multinomial logit.
+// See Agrest's Categorical Data Analysis 7.1.3
+// (pg. 271 in the 2002 edition)
 
 function update_covar(covar, coef, len, rows, cols){
 	var tmp_pct = new Array(len);
@@ -29,7 +38,7 @@ function update_covar(covar, coef, len, rows, cols){
 		tot = tot + Math.exp(subtot1);
 	}
 
-	// Do each one
+	// Get each numerator
 	for(var i=0; i < rows; i++){
 		var subtot2 = 0;
 		var m = 0;
@@ -61,7 +70,8 @@ function HealthvisIconArray() {
     this.formdata = [];
 
     this.y = d3.scale.linear().domain([0,100]).range([490,10]);
-
+ 
+    // Need better way of setting plot dimensions
     this.init = function(elementId, d3Params) {
         this.grid = d3.select('#main')
             .append('svg')
@@ -101,6 +111,7 @@ function HealthvisIconArray() {
 
         this.data = [];
 
+	// These things should all depend on plot dimensions
         var cellWidth = 30;
         var cellHeight = 39;
         var start = 10;
@@ -110,6 +121,8 @@ function HealthvisIconArray() {
         var yBuffer = 49;
         var count = 0;
 
+	// Initialize an object giving position and color info
+	// for each rect.
         for(var i=0; i < 10; i++){
 	    this.data.push(new Array());
      	    for(var j=0; j < 10; j++){
@@ -183,11 +196,14 @@ function HealthvisIconArray() {
 
 
     this.update = function(formdata) {
-	if(this.obj_flag == 0){	
+
+	var nums = null;
+	
+	if(this.flag == 0){	
 		for (var j=0; j<this.group_colors.length; j++) {
 			this.formdata[j] = parseFloat(formdata[j].value);
 		}
-		var nums = this.formdata;
+		nums = this.formdata;
 
 	} else {
 		this.covar = init_covar(this.cats); // Reset everything
@@ -203,9 +219,11 @@ function HealthvisIconArray() {
 		
 		this.pcts = update_covar(this.covar, this.coefs, this.pcts.length, this.rows, this.cols);
 
-		var nums = this.pcts;
+		nums = this.pcts;
 	}
 
+
+	// Reset colors based on new numbers for each covariate
 	var sum=0;
 	var col_tmp = this.init_color.slice(0);
 
@@ -216,8 +234,14 @@ function HealthvisIconArray() {
 		sum += nums[k];		
 	}
 
+	if(sum > 100){
+		alert("Inputs total >100...figure will update, but it may not be how you want.");
+	}
+
+	// Reverse, since we need to go from bottom to top
 	this.color_array = col_tmp.reverse();
 
+	// Set new colors in data object
 	var count=0;
 	for(var i=0; i < 10; i++){
 		for(var j=0; j <10; j++){
@@ -226,6 +250,7 @@ function HealthvisIconArray() {
 		}
 	}
 
+	// Here is the transition: fill new colors
 	this.col.transition().style('fill', function(d) { return d.color; });
 	
     };

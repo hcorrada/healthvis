@@ -1,16 +1,28 @@
-#' This function creates an interactive heatmap visualization
+#' Create a sortable heatmap.
 #'
-#' \code{heatmapVis} Creates an interactive heatmap. Creates a standard clustered
-#' heatmap via R hclust, and also takes in vectors of outcomes by which to sort the
-#' data.
+#' \code{heatmapVis} creates an interactive, sortable heatmap. Visualizes a matrix of subjects
+#' by observations, and uses an accompanying matrix of subjects by additional covariates to sort.
 #'
-#' @param data Dataframe to be displayed in heatmap from (rows are observations). 
+#' @param data Matrix to be displayed in heatmap from (rows are observations/subjects/etc.)
+#' Row and column names are used in the figure.
 #' @param sort.by Dataframe of outcomes to sort on (same number of rows as data)
 #' @param colors Vector of colors that the heatmap should range through (3 colors: low, medium, high)
 #' @param plot.title The title of the plot to be created
 #' @param plot If TRUE the plot is launched in a browser. 
 #' @param gaeDevel use appengine local dev server (for testing only, users should ignore)
 #' @export
+#' @examples
+#' # Create a matrix of random values for a set of subjects
+#' nsubj = 40
+#' nobs = 25
+#' data1 <- matrix(rnorm(nsubj*nobs), nsubj, nobs)
+#' rownames(data1) <- sapply(1:nsubj, function(x){paste("S", x, sep="")})
+#' colnames(data1) <- sapply(1:nobs, function(x){paste("V", x, sep="")})
+#'
+#' # Create a random set of discrete and continuous covariates to sort by
+#' sort.by1 <- data.frame("Treatment"=rbinom(nsubj, 1, 0.4), "Age"=rpois(nsubj, 30))
+#'
+#' heatmapVis(data=data1, sort.by=sort.by1) 
 #' 
 
 heatmapVis <- function(data, sort.by, colors = heat_hcl(3), plot.title="Heatmap Visualization", plot=TRUE, gaeDevel=FALSE,url=NULL){

@@ -1,6 +1,8 @@
-#' This function creates an interactive survival plot 
+#' Create a interactive plot of a cox proportional hazards model
 #'
-#' \code{survivalVis} creates an interactive survival plot
+#' \code{survivalVis} plots a cox proportional hazards model and uses
+#' the covariate information to update the figure in real time. Users
+#' can specify a grouping covariate to display a group comparison.
 #' 
 #'
 #' @param cobj An object created with a call to \code{\link{coxph}}
@@ -14,6 +16,10 @@
 #' @return healthvisObj An object of class "healthvis" containing the HTML, Javascript,
 #' and CSS code needed to generate the interactive graphic
 #' @export
+#' @examples
+#' # Uses the survival package
+#' cobj <- coxph(Surv(time, status)~trt+age+celltype+prior, data=veteran)
+#' survivalVis(cobj, data=veteran, plot.title="Veteran Survival Data", group="trt", group.names=c("Treatment", "No Treatment"), line.col=rainbow_hcl(2,start=50,end=270))
 
 survivalVis <- function(cobj, data, group=NULL, group.names="", line.col="deepskyblue", plot.title="Survival Plot",plot=TRUE, gaeDevel=FALSE,url=NULL,day.max=1000){
   
@@ -53,7 +59,7 @@ survivalVis <- function(cobj, data, group=NULL, group.names="", line.col="deepsk
         warning("Variable ", vars[[i]], " has fewer than 5 unique values; treating as continuous, but should this be a factor?")
       }
       menu.type[i] <- "continuous"
-      var.list[[vars[i]]] <- range(cur)
+      var.list[[vars[i]]] <- range(cur, na.rm=T)
     } else if(class(cur) == "factor"){
       if(length(levels(cur)) > 10){
         stop("Variable ", vars[[i]], " has too many levels (>10).")
@@ -74,9 +80,9 @@ survivalVis <- function(cobj, data, group=NULL, group.names="", line.col="deepsk
  
   } else {
 	  cat(vars)
-    lvls <- unique(data[[group]])
-	  #glen <- length(levels(data[[group]]))
-    glen <- length(lvls)
+        lvls <- unique(data[[group]])
+
+        glen <- length(lvls)
 
 	  if(length(group.names) != glen){
 		stop("Number of group names does not match number of groups.")
@@ -90,8 +96,7 @@ survivalVis <- function(cobj, data, group=NULL, group.names="", line.col="deepsk
 	  for(i in 1:glen){
 		ds <- tmp.data[1,]
 		ds <- baseline(ds)
-		#ds[[group]] <- levels(ds[[group]])[i]
-    ds[[group]] <- lvls[i]
+	      ds[[group]] <- lvls[i]
 		so <- survfit(cobj, newdata=ds)
 		djs[i] <- data_assign(so)
 	  }

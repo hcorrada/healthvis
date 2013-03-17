@@ -1,8 +1,9 @@
-#' This function creates an interactive Icon Array visualization
+#' Create an icon array.
 #'
-#' \code{iconArrayVis} Creates an interactive icon array. Allows for specification of a multinomial
+#' \code{iconArrayVis} creates an interactive icon array. Allows for specification of a multinomial
 #' logit regression to estimate probability of each group based on a set of covariates. Alternatively,
-#' can specify number of groups and group names to manually manipulate icons.
+#' can specify number of groups and group names to manually manipulate icons. This concept is
+#' based on research by Zikmund-Fisher et. Al. (http://www.iconarray.com/)
 #' 
 #' @param mobj Result of multinomial logit regression. Defaults to NULL, meaning groups are manually specified.
 #' @param groups Specify number of groups if multinomial model is not provided. Default 2 groups.
@@ -12,8 +13,15 @@
 #' @param plot If TRUE the plot is launched in a browser. 
 #' @param gaeDevel use appengine local dev server (for testing only, users should ignore)
 #' @export
-#' 
-iconArrayVis <- function(mobj=NULL, data=NULL, groups=2, group.names=c("Group1", "Group2"), colors=c("deepskyblue", "orangered"),init.color="lightgray", plot.title="Icon Array",plot=TRUE,gaeDevel=FALSE,url=NULL){
+#' @examples
+#' # To create a simple icon array image
+#' iconArrayVis()
+#' # To display the results of a multinomial logit (quine data from MASS package)
+#' mobj <- multinom(Age~Eth+Sex+Lrn+Days, data=quine)
+#' iconArrayVis(mobj, data=quine, colors=rainbow_hcl(4, start=50, end=270), plot.title="School Absenteeism")
+
+
+iconArrayVis <- function(mobj=NULL, data=NULL, groups=2, group.names=c("Group1", "Group2"), colors=rainbow_hcl(2, start=50, end=270),init.color="lightgray", plot.title="Icon Array",plot=TRUE,gaeDevel=FALSE,url=NULL){
 
 	if(is.null(mobj)){
 	  obj.flag = 0  # Flag for whether or not an object is passed

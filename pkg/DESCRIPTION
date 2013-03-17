@@ -24,6 +24,7 @@ Collate:
     'healthvisMethods.R'
     'accuracyTableVis.R'
     'survivalVis.R'
-    'iconArrayVis
+    'heatmapVis.R'
+    'iconArrayVis.R'
     'listHealthVis.R'
     'zzz.R'

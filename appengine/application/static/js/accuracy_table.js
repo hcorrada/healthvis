@@ -31,15 +31,18 @@ function HealthvisAccuracyTable() {
             .append('svg:svg')
             .attr('width', 700)
             .attr('height', 500);
+
+	    this.colors = d3Params.colors;
     }
 
     this.visualize = function() {
+
         this.tp = this.rectDemo.append('svg:rect')
             .attr('x', 5)
             .attr('y', 5)
             .attr('height', 142.5)
             .attr('width', 342.5)
-            .style('fill', 'deepskyblue');
+            .style('fill', this.colors[0]);
 
         this.tp_txt = this.rectDemo.append('svg:text')
             .attr('x', 342.5/2+5) // width/2 + 5
@@ -62,7 +65,7 @@ function HealthvisAccuracyTable() {
             .attr('y', 5)
             .attr('height', 142.5)
             .attr('width', 342.5)
-            .style('fill', 'orangered');
+            .style('fill', this.colors[1]);
 
         this.fn_txt = this.rectDemo.append('svg:text')
             .attr('x', 342.5 + 342.5/2+5) //200 + width/2 + 5
@@ -85,7 +88,7 @@ function HealthvisAccuracyTable() {
             .attr('y', 152.5)
             .attr('height', 142.5)
             .attr('width', 342.5)
-            .style('fill', 'orangered');
+            .style('fill', this.colors[1]);
 
         this.fp_txt = this.rectDemo.append('svg:text')
             .attr('x', 342.5/2+5)  // width/2 + 5
@@ -108,7 +111,7 @@ function HealthvisAccuracyTable() {
             .attr('y', 152.5)
             .attr('height', 142.5)
             .attr('width', 342.5)
-            .style('fill', 'deepskyblue');
+            .style('fill', this.colors[0]);
 
         this.tn_txt = this.rectDemo.append('svg:text')
             .attr('x', 342.5 + 342.5/2+5)
@@ -129,28 +132,28 @@ function HealthvisAccuracyTable() {
         this.tp_bt_txt = this.rectDemo.append('svg:text')
             .attr('x', 5)
             .attr('y', 350)
-            .style('fill', 'deepskyblue')
+            .style('fill', this.colors[0])
             .style('font-size', 25+'px')
             .text('There are '+250+' people with disease who test positive.');
 
         this.fn_bt_txt = this.rectDemo.append('svg:text')
             .attr('x', 5)
             .attr('y', 380)
-            .style('fill', 'orangered')
+            .style('fill', this.colors[1])
             .style('font-size', 25+'px')
             .text('There are '+250+' people with disease who test negative.');
 
         this.fp_bt_txt = this.rectDemo.append('svg:text')
             .attr('x', 5)
             .attr('y', 410)
-            .style('fill', 'orangered')
+            .style('fill', this.colors[1])
             .style('font-size', 25+'px')
             .text('There are '+250+' people without disease who test positive.');
 
         this.tn_bt_txt = this.rectDemo.append('svg:text')
             .attr('x', 5)
             .attr('y', 440)
-            .style('fill', 'deepskyblue')
+            .style('fill', this.colors[0])
             .style('font-size', 25+'px')
             .text('There are '+250+' people without disease who test negative.');
     }
