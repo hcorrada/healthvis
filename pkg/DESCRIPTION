@@ -15,12 +15,12 @@ Description: The healthvis package is designed to make it easy to create and
 Suggests:
     testthat,
     roxygen2,
-	survival,
-	nnet
+    survival,
+    nnet,
+	colorspace
 Depends:
     RCurl,
-    rjson,
-    colorspace
+    rjson
 Collate:
     'AllClasses.R'
     'healthvisMethods.R'

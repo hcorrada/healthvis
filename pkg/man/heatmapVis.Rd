@@ -2,7 +2,8 @@
 \alias{heatmapVis}
 \title{Create a sortable heatmap.}
 \usage{
-  heatmapVis(data, sort.by, colors = heat_hcl(3),
+  heatmapVis(data, sort.by,
+    colors = c("#D33F6A", "#E99A2C", "#E2E6BD"),
     plot.title = "Heatmap Visualization", plot = TRUE,
     gaeDevel = FALSE, url = NULL)
 }

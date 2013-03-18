@@ -17,11 +17,12 @@
 #' # To create a simple icon array image
 #' iconArrayVis()
 #' # To display the results of a multinomial logit (quine data from MASS package)
+#' library(MASS)
 #' mobj <- multinom(Age~Eth+Sex+Lrn+Days, data=quine)
 #' iconArrayVis(mobj, data=quine, colors=rainbow_hcl(4, start=50, end=270), plot.title="School Absenteeism")
 
 
-iconArrayVis <- function(mobj=NULL, data=NULL, groups=2, group.names=c("Group1", "Group2"), colors=rainbow_hcl(2, start=50, end=270),init.color="lightgray", plot.title="Icon Array",plot=TRUE,gaeDevel=FALSE,url=NULL){
+iconArrayVis <- function(mobj=NULL, data=NULL, groups=2, group.names=c("Group1", "Group2"), colors=c("deepskyblue", "orangered"), init.color="lightgray", plot.title="Icon Array",plot=TRUE,gaeDevel=FALSE,url=NULL){
 
 	if(is.null(mobj)){
 	  obj.flag = 0  # Flag for whether or not an object is passed

@@ -3,8 +3,8 @@
 \title{Create an accuracy table visualization}
 \usage{
   accuracyTableVis(plot.title = "Sensitivity/Specificity Plot",
-    colors = rainbow_hcl(2, start = 50, end = 270),
-    plot = TRUE, gaeDevel = FALSE, url = NULL)
+    colors = c("deepskyblue", "orangered"), plot = TRUE,
+    gaeDevel = FALSE, url = NULL)
 }
 \arguments{
   \item{colors}{The colors used (two colors, first for

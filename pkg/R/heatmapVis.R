@@ -25,7 +25,7 @@
 #' heatmapVis(data=data1, sort.by=sort.by1) 
 #' 
 
-heatmapVis <- function(data, sort.by, colors = heat_hcl(3), plot.title="Heatmap Visualization", plot=TRUE, gaeDevel=FALSE,url=NULL){
+heatmapVis <- function(data, sort.by, colors = c("#D33F6A","#E99A2C","#E2E6BD"), plot.title="Heatmap Visualization", plot=TRUE, gaeDevel=FALSE,url=NULL){
 	if(is.null(dim(data)) | is.null(dim(sort.by))){
 		stop("data and sort.by must be matrices and/or data.frames.")
 	}

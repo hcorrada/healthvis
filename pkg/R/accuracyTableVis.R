@@ -12,7 +12,7 @@
 #' @param gaeDevel use appengine local dev server (for testing only, users should ignore)
 #' @export
 #' 
-accuracyTableVis <- function(plot.title="Sensitivity/Specificity Plot", colors = rainbow_hcl(2, start=50, end=270), plot=TRUE,gaeDevel=FALSE,url=NULL){
+accuracyTableVis <- function(plot.title="Sensitivity/Specificity Plot", colors = c("deepskyblue", "orangered"), plot=TRUE,gaeDevel=FALSE,url=NULL){
 
   if(length(colors) != 2 | class(colors) != "character"){
 	stop("Please specify two colors: the first for TP/TN,the second from FP/FN.")

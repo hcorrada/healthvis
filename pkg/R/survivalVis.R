@@ -18,6 +18,10 @@
 #' @export
 #' @examples
 #' # Uses the survival package
+#' library(survival)
+#' # Set trt and prior as factors so they are treated as such
+#' veteran$trt <- as.factor(veteran$trt)
+#' veteran$prior <- as.factor(veteran$prior)
 #' cobj <- coxph(Surv(time, status)~trt+age+celltype+prior, data=veteran)
 #' survivalVis(cobj, data=veteran, plot.title="Veteran Survival Data", group="trt", group.names=c("Treatment", "No Treatment"), line.col=rainbow_hcl(2,start=50,end=270))
 
