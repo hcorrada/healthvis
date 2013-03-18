@@ -14,11 +14,13 @@ Description: The healthvis package is designed to make it easy to create and
     see all currently available plots use the command listHealthVis().
 Suggests:
     testthat,
-    roxygen2
+    roxygen2,
+	survival,
+	nnet
 Depends:
     RCurl,
     rjson,
-    survival
+    colorspace
 Collate:
     'AllClasses.R'
     'healthvisMethods.R'
