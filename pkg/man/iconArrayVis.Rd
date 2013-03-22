@@ -43,7 +43,8 @@
 iconArrayVis()
 # To display the results of a multinomial logit (quine data from MASS package)
 library(MASS)
+library (nnet) # contains function multinom
 mobj <- multinom(Age~Eth+Sex+Lrn+Days, data=quine)
-iconArrayVis(mobj, data=quine, colors=rainbow_hcl(4, start=50, end=270), plot.title="School Absenteeism")
+iconArrayVis(mobj, data=quine, colors=c("deepskyblue", "orangered"), plot.title="School Absenteeism")
 }
 
