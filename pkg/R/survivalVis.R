@@ -23,7 +23,7 @@
 #' veteran$trt <- as.factor(veteran$trt)
 #' veteran$prior <- as.factor(veteran$prior)
 #' cobj <- coxph(Surv(time, status)~trt+age+celltype+prior, data=veteran)
-#' survivalVis(cobj, data=veteran, plot.title="Veteran Survival Data", group="trt", group.names=c("Treatment", "No Treatment"), line.col=rainbow_hcl(2,start=50,end=270))
+#' survivalVis(cobj, data=veteran, plot.title="Veteran Survival Data", group="trt", group.names=c("Treatment", "No Treatment"), line.col=c("#E495A5","#39BEB1"))
 
 survivalVis <- function(cobj, data, group=NULL, group.names="", line.col="deepskyblue", plot.title="Survival Plot",plot=TRUE, gaeDevel=FALSE,url=NULL,day.max=1000){
   
