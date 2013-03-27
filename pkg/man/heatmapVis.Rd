@@ -31,6 +31,11 @@
   and uses an accompanying matrix of subjects by additional
   covariates to sort.
 }
+\note{
+  Currently, matricies with >100 rows or columns are
+  currently a bit slow, and larger matrices may hit a data
+  passing limit.
+}
 \examples{
 # Create a matrix of random values for a set of subjects
 nsubj = 40

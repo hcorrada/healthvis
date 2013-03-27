@@ -43,6 +43,10 @@
   in real time. Users can specify a grouping covariate to
   display a group comparison.
 }
+\note{
+  Interaction terms are not fully supported currently. The
+  figure will plot, but transitions may be inaccurate.
+}
 \examples{
 # Uses the survival package
 library(survival)

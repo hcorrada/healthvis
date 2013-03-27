@@ -11,6 +11,7 @@
 #' @param plot If TRUE the plot is launched in a browser. 
 #' @param gaeDevel use appengine local dev server (for testing only, users should ignore)
 #' @export
+#' @note Currently, matricies with >100 rows or columns are currently a bit slow, and larger matrices may hit a data passing limit.
 #' @examples
 #' # Create a matrix of random values for a set of subjects
 #' nsubj = 40

@@ -16,6 +16,7 @@
 #' @return healthvisObj An object of class "healthvis" containing the HTML, Javascript,
 #' and CSS code needed to generate the interactive graphic
 #' @export
+#' @note Interaction terms are not fully supported currently. The figure will plot, but transitions may be inaccurate.
 #' @examples
 #' # Uses the survival package
 #' library(survival)

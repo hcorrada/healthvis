@@ -25,4 +25,7 @@
   positives (FP), true negatives (TN), and false negatives
   (FN) are reactively displayed.
 }
+\examples{
+accuracyTableVis()
+}
 

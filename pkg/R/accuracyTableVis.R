@@ -11,6 +11,8 @@
 #' @param plot If TRUE the plot is launched in a browser. 
 #' @param gaeDevel use appengine local dev server (for testing only, users should ignore)
 #' @export
+#' @examples
+#' accuracyTableVis()
 #' 
 accuracyTableVis <- function(plot.title="Sensitivity/Specificity Plot", colors = c("deepskyblue", "orangered"), plot=TRUE,gaeDevel=FALSE,url=NULL){
 
