@@ -15,4 +15,4 @@ The advantages of the healthvis package over other packages for interactive grap
   * healthvis graphics can be embedded with a single line of code in websites.
 
 You can follow the development of the healthvis package at www.healthvis.org, where you
-will also find tutorials and example galleries. 
+will also find tutorials on how to develop and FAQ's about the package. 
