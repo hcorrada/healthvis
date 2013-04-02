@@ -44,6 +44,7 @@ heatmapVis <- function(data, sort.by, colors = c("#D33F6A","#E99A2C","#E2E6BD"),
 	}
 
 	ordering <- apply(sort.by, 2, order) # Gets ordering for each outcome
+	data.sort <- apply(sort.by, 2, function(x){x[order(x)]})
 
 	if(is.null(rownames(data))){
 		rownames <- 1:nrow(data)
@@ -58,12 +59,12 @@ heatmapVis <- function(data, sort.by, colors = c("#D33F6A","#E99A2C","#E2E6BD"),
 		colnames <- colnames(data)
 	}
 	
-	#vlist <- list("Sort By"=c("None", colnames(sort.by)), "Junk"=c("A", "B"))
 	vlist <- list("Sort By"=c("None", colnames(sort.by)))
 	medians <- apply(data, 2, median)
 	names(medians) <- NULL
 
 	d3Params=list(data=data,
+#		    data.sort=data.sort,
 		    rownames=rownames,
 		    colnames=colnames,
 		    ordering=ordering,
@@ -78,7 +79,6 @@ heatmapVis <- function(data, sort.by, colors = c("#D33F6A","#E99A2C","#E2E6BD"),
 	healthvisObj = new("healthvis",
                      plotType="heatmap",
                      plotTitle=plot.title,
-#                     varType=c("factor", "factor"),
 			   varType="factor",
                      varList=vlist,
 			   d3Params=d3Params,

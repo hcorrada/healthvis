@@ -175,7 +175,7 @@ function HealthvisHeatmap() {
 			    .attr("width", this.boxw)
 			    .attr("height", this.boxh)
 			    .style("fill", function(d){return d.color;})
-			    .style("stroke", "#555");
+//			    .style("stroke", "#555"); // For box outlines, uncomment
 
     };
 
