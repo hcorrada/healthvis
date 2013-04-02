@@ -44,7 +44,7 @@ heatmapVis <- function(data, sort.by, colors = c("#D33F6A","#E99A2C","#E2E6BD"),
 	}
 
 	ordering <- apply(sort.by, 2, order) # Gets ordering for each outcome
-	data.sort <- apply(sort.by, 2, function(x){x[order(x)]})
+#	data.sort <- apply(sort.by, 2, function(x){x[order(x)]}) # For the future
 
 	if(is.null(rownames(data))){
 		rownames <- 1:nrow(data)
