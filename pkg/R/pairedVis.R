@@ -22,6 +22,9 @@
 
 pairedVis <- function(data, ..., plot.title="My Scatterplot Matrix", plot=TRUE, gaeDevel=FALSE,url=NULL){
   
+  if(class(data) != "data.frame"){
+	stop("data must be a data frame")
+  }
   classes <- sapply(data, class)
   
   nr <- nrow(data)

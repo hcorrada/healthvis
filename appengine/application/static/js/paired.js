@@ -47,9 +47,6 @@ function HealthvisPaired() {
           .ticks(5);
        
       var color = d3.scale.category10(); 
-
-
-
    
     var data= this.json;
     console.log("data", data);
@@ -64,8 +61,6 @@ function HealthvisPaired() {
           traits = d3.keys(data[0]).filter(function(d) { 
             return !(d in dlist); }),
           n = traits.length;
-          console.log("n = ", n);
-          console.log("csv traits=", traits);
       traits.forEach(function(trait) {
         domainByTrait[trait] = d3.extent(data, function(d) { return d[trait]; });
       });
