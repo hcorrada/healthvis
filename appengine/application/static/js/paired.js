@@ -27,7 +27,7 @@ function HealthvisPaired() {
 	  var width = 700,
 		  height = 650;
 		  size = 600/this.n;
-          padding = 19.5;
+          padding = 29.5;
        
       var x = d3.scale.linear()
           .range([padding / 2, size - padding / 2]);
@@ -125,14 +125,14 @@ function HealthvisPaired() {
 	  // Make Legend
 	  this.legend = svg.append('g')
 			  .attr('class', 'legend')
-			  .attr('x', 610)
+			  .attr('x', 590)
 			  .attr('y', 125)
 			  .attr('height', 100)
 			  .attr('width', 80);
 
 		this.legend.selectAll('rect')
 		   .data(this.levels[column]).enter().append('rect')
-		  .attr('x', 610)
+		  .attr('x', 590)
 		  .attr('y', function(d,i){return i*20;})
 		  .attr('width', 10)
 		  .attr('height', 10)
@@ -140,7 +140,7 @@ function HealthvisPaired() {
 
 		this.legend.selectAll('text')
 		   .data(this.levels[column]).enter().append('text')
-		  .attr('x', 630)
+		  .attr('x', 610)
 		  .attr('y', function(d,i){return i*20 + 10;})
 		  .text(function(d) { return d; });
       
@@ -223,7 +223,7 @@ function HealthvisPaired() {
 		this.legend.selectAll('text').data([]).exit().remove();
 		this.legend.selectAll('rect')
 		   .data(this.levels[column]).enter().append('rect')
-		  .attr('x', 610)
+		  .attr('x', 590)
 		  .attr('y', function(d,i){return i*20;})
 		  .attr('width', 10)
 		  .attr('height', 10)
@@ -231,7 +231,7 @@ function HealthvisPaired() {
 
 		this.legend.selectAll('text')
 		   .data(this.levels[column]).enter().append('text')
-		  .attr('x', 630)
+		  .attr('x', 610)
 		  .attr('y', function(d,i){return i*20 + 10;})
 		  .text(function(d) { return d; });
     };
