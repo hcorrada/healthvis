@@ -25,12 +25,15 @@ function HealthvisAccuracyTable() {
 
 
     this.rectDemo = null;
+	this.width = 700;
+	this.height = 500;
 
     this.init = function(elementId, d3Params) {
+		
         this.rectDemo = d3.select('#main')
             .append('svg:svg')
-            .attr('width', 700)
-            .attr('height', 500);
+			.attr('width', this.width)
+            .attr('height', this.height);
 
 	    this.colors = d3Params.colors;
     }

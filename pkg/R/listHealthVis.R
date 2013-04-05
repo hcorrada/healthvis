@@ -7,4 +7,5 @@ listHealthVis<- function(){
   print("accuracyTableVis() - Creates interactive accuracy table plots")
   print("iconArrayVis() - Creates interactive icon array")
   print("heatmapVis() - Creates interactive heatmap")
+  print("pairedVis() - Creates interactive scatterplot matrix")
 }

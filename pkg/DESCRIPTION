@@ -2,7 +2,7 @@ Package: healthvis
 Maintainer: Prasad Patil
     <prpatil@jhsph.edu>
 Author: Jeffrey T. Leek <jtleek@gmail.com>, Prasad Patil<prpatil@jhsph.edu>
-Version: 1.0
+Version: 1.0.1
 License: GPL-3
 Title: Interactive Health Visualizations
 Description: The healthvis package is designed to make it easy to create and
@@ -30,3 +30,4 @@ Collate:
     'iconArrayVis.R'
     'listHealthVis.R'
     'zzz.R'
+    'pairedVis.R'
