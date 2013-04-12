@@ -8,6 +8,12 @@
 </div>
 {% endblock %}
 
+{%  block init_healthvis %}
+<script type="text/javascript">
+    var healthvis = new Healthvis("#main", null);
+</script>
+{%  endblock %}
+
 {% block plot_block %}
 <div class="row">
     <div class="span8" id="main">

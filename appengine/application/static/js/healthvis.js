@@ -1,8 +1,11 @@
-function Healthvis()  {
+function Healthvis(elementId, embedIds)  {
     if (arguments.callee._singletonInstance ) {
         return arguments.callee._singletonInstance;
     }
     arguments.callee._singletonInstance = this;
+
+    this.elementId = elementId;
+    this.embedIds = embedIds;
 
     this.renderer = null;
     this.paramsURL = null;
@@ -15,8 +18,9 @@ function Healthvis()  {
         this.renderer = fn;
     };
 
-    this.visualize = function(elementId) {
-        var renderer = this.renderer;
+    this.visualize = function() {
+        var renderer = this.renderer,
+            elementId = this.elementId;
 
         d3.json(this.paramsURL, function(json) {
             renderer.init(elementId, json);
@@ -32,11 +36,11 @@ function Healthvis()  {
         var height = inputHeight,
             width = inputWidth;
 
-        if ($('#embedheader')) {
+        if (embedIds) {
             var totalHeight = $(window).height();
 
-            height = totalHeight - $('#embedheader').height() - $('#embedfooter').height();
-            width = $(window).width();
+            height = totalHeight - $(embedIds.header).height() - $(embedIds.footer).height();
+            width = $(elementId).width();
 
 
             height = (height > 0 && height < inputHeight) ? height : inputHeight;
@@ -46,8 +50,6 @@ function Healthvis()  {
         return {width: width, height: height};
     };
 }
-
-var healthvis = new Healthvis();
 
 $(document).ready(function () {
     $('#covariate-form :input').change(function () {

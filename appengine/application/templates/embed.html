@@ -12,6 +12,12 @@
     </div>
 {% endblock %}
 
+{%  block init_healthvis %}
+    <script type="text/javascript">
+        var healthvis = new Healthvis("#main", {header: '#embedheader', footer: '#embedfooter'});
+    </script>
+{%  endblock %}
+
 {% block plot_block %}
         <div id="main" style="height: 100%">
         </div>

@@ -58,8 +58,8 @@ function HealthvisSurvival() {
 
         this.vis = d3.select(elementId)
             .append('svg:svg')
-            .attr('width', this.w - 30)
-            .attr('height', this.h - 30)
+            .attr('width', this.w)
+            .attr('height', this.h + 30)
             .append('svg:g')
             .attr('transform', 'translate(' + 40 + ',' + 10 + ')');
 

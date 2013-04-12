@@ -30,11 +30,12 @@
 <script src="/static/js/lib/bootstrap-2.0.3.min.js"></script>
 <script src="http://d3js.org/d3.v2.js"></script>
 <script src="/static/js/healthvis.js"></script>
+{% block init_healthvis %} <!-- healthvis call goes here --> {% endblock %}
 <script src="/static/js/{{ obj.type }}.js"></script>
 
 <script>
     healthvis.setParamsURL("{{ url_for('get_params', id=plot_id) }}");
-    healthvis.visualize('#main');
+    healthvis.visualize();
 </script>
 
 {% block tail_script %} <!-- defer-compatible JS block --> {% endblock %}

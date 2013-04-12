@@ -30,16 +30,10 @@ function HealthvisAccuracyTable() {
 
     this.init = function(elementId, d3Params) {
 
-        var container = $(elementId);
-        this.width = container.width() < this.width ? container.width() : this.width;
-        this.height = (container.height() > 0) && (container.height() < this.height) ? container.height() : this.height;
-
         this.rectDemo = d3.select(elementId)
             .append('svg:svg')
             .attr('width', this.width)
-            .attr('height', this.height)
-            .attr('viewBox', "0 0 " + this.width + " " + this.height)
-            .attr('preserveAspectRatio', 'xMinYMin');
+            .attr('height', this.height);
 
 	    this.colors = d3Params.colors;
 
