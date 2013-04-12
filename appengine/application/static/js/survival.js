@@ -50,10 +50,16 @@ function HealthvisSurvival() {
     this.group_names=null;
 
     this.init = function(elementId, d3Params) {
+        // if not embedding, this just returns the input width and height
+        var dimensions = healthvis.getDimensions(this.w, this.h);
+        this.w = dimensions.width;
+        this.h = dimensions.height;
+
+
         this.vis = d3.select(elementId)
             .append('svg:svg')
-            .attr('width', this.w)
-            .attr('height', this.h+30)
+            .attr('width', this.w - 30)
+            .attr('height', this.h - 30)
             .append('svg:g')
             .attr('transform', 'translate(' + 40 + ',' + 10 + ')');
 
@@ -148,6 +154,7 @@ function HealthvisSurvival() {
 	var group_names = this.group_names;
 	
 	if(!(group_names == "")){
+        // TODO: make the legend size relative to this.w and this.h
 		var legend = this.vis.append('g')
 			  .attr('class', 'legend')
 			  .attr('x', this.w - 165)

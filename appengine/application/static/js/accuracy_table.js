@@ -29,13 +29,20 @@ function HealthvisAccuracyTable() {
 	this.height = 500;
 
     this.init = function(elementId, d3Params) {
-		
-        this.rectDemo = d3.select('#main')
+
+        var container = $(elementId);
+        this.width = container.width() < this.width ? container.width() : this.width;
+        this.height = (container.height() > 0) && (container.height() < this.height) ? container.height() : this.height;
+
+        this.rectDemo = d3.select(elementId)
             .append('svg:svg')
-			.attr('width', this.width)
-            .attr('height', this.height);
+            .attr('width', this.width)
+            .attr('height', this.height)
+            .attr('viewBox', "0 0 " + this.width + " " + this.height)
+            .attr('preserveAspectRatio', 'xMinYMin');
 
 	    this.colors = d3Params.colors;
+
     }
 
     this.visualize = function() {

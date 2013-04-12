@@ -1,7 +1,7 @@
 {%  extends "base.html" %}
 
 {% block header_block %}
-    <div>
+    <div id="embedheader">
         <h3>{{ obj.title }}</h3>
         <small>
         <p> created with the <a href="http://healthvis.org">healthvis</a> R package
@@ -13,10 +13,10 @@
 {% endblock %}
 
 {% block plot_block %}
-        <div id="main">
+        <div id="main" style="height: 100%">
         </div>
 
-    <div class="row">
+    <div class="row" id="embedfooter">
     <div class="span2">
     <button type="button" class="btn btn-small" data-toggle="collapse" data-target="#covariate-form">Toggle form</button>
     </div>
