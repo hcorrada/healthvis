@@ -33,8 +33,16 @@
 <script src="/static/js/{{ obj.type }}.js"></script>
 
 <script>
-    healthvis.setParamsURL("{{ url_for('get_params', id=plot_id) }}")
-    healthvis.visualize('#main')
+    var url = "{{ url_for('get_params', id=plot_id) }}";
+    var saved = true;
+
+    {% if not obj.saved %}
+    saved = false;
+    url = "{{ obj.d3params }}";
+    {% endif %}
+
+    healthvis.initialize(saved, url);
+    healthvis.visualize('#main');
 </script>
 
 {% block tail_script %} <!-- defer-compatible JS block --> {% endblock %}

@@ -17,7 +17,8 @@ Suggests:
     roxygen2,
     survival,
     nnet,
-    colorspace
+    colorspace,
+    httpuv
 Depends:
     RCurl,
     rjson
