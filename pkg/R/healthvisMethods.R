@@ -59,23 +59,19 @@ if (!isGeneric("plot"))
 setMethod("plot", signature=c("healthvis","missing"),
           function(x,y,...) {
             url=sprintf("%s/display/%s", x@url, x@serverID)
-            cat("\nOpening plot at URL: ", url, "\n")
+            message("\nOpening plot at URL: ", url, "\n")
             browseURL(url)
             
-            tryCatch({
-              x@server$start()
-              },
-              finally= {
-                
-              }
-            )
-    
+            server <- x@server$start()
+            on.exit(httpuv::stopServer(server))
+            x@server$run()
 })
 
 HVServer$methods(
   initialize=function(...) {
     port <<- 7245L
     server <<- NULL
+    interrupted <<- FALSE
     callSuper(...)
   },
   start=function(...) {
@@ -91,14 +87,21 @@ HVServer$methods(
           invisible()
         })
       })
-    httpuv::runServer("0.0.0.0", port, callbacks, 250)
-  },  
+    server <<- httpuv::startServer("0.0.0.0", port, callbacks)
+    return(server)
+  },
+  run=function() {
+    while (!interrupted) {
+      httpuv::service(250)
+      Sys.sleep(0.001)
+    }
+  },
   bindHVObj=function(obj) {
     msgCallback <<- function(binary, msg) {
       if (binary) {
         msg <- rawToChar(msg)
       }
-      cat("msg received ", msg, "\n")
+      #cat("msg received ", msg, "\n")
       msg = rjson::fromJSON(msg)
       if (msg$type == "request") {
         out=list(type="response", id=msg$id, data=list())
@@ -117,10 +120,10 @@ HVServer$methods(
             plotid=obj@serverID
           )
           res <- postForm(uri, .params=formParams)
-          out$data=res
+          out$data=rjson::toJSON(list(id=res))
         }
         if (msg$action == "stopServer") {
-          httpuv::stopServer
+          interrupted <<- TRUE
         }
         response=rjson::toJSON(out)
         websocket$send(response)
@@ -128,8 +131,5 @@ HVServer$methods(
           
       }
     }
-  },
-  service=function() {
-    httpuv::service(1000)
   }
 )

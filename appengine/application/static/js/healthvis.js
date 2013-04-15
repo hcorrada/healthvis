@@ -128,9 +128,9 @@ Healthvis.prototype._getParams = function(callback) {
 Healthvis.prototype._savePlot = function(url, uploadURL) {
     var self = this;
 
-    var callback = function(id) {
+    var callback = function(json) {
         self._stopServer();
-        window.location.replace('/display/' + id);
+        window.location.replace('/display/' + json.id);
     };
 
     this.initialize(false, url);
