@@ -75,6 +75,7 @@ setMethod("plot", signature=c("healthvis","missing"),
 HVServer$methods(
   initialize=function(...) {
     port <<- 7245L
+    server <<- NULL
     callSuper(...)
   },
   start=function(...) {
@@ -100,10 +101,26 @@ HVServer$methods(
       cat("msg received ", msg, "\n")
       msg = rjson::fromJSON(msg)
       if (msg$type == "request") {
-        out=list(type="response", id=msg$id)
+        out=list(type="response", id=msg$id, data=list())
         msg <- msg$data
         if (msg$action == "getParams") {
           out$data=obj@d3Params
+        } else if (msg$action == "savePlot") {
+          filename <- tempfile()
+          filehandle <- file(filename, "w")
+          writeChar(obj@d3Params, filename, eos="\r\n")
+          close(filehandle)
+        
+          uri <- msg$data
+          formParams=list(
+            fileup=fileUpload(filename=filename,contentType="text/plain"),
+            plotid=obj@serverID
+          )
+          res <- postForm(uri, .params=formParams)
+          out$data=res
+        }
+        if (msg$action == "stopServer") {
+          httpuv::stopServer
         }
         response=rjson::toJSON(out)
         websocket$send(response)

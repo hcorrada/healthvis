@@ -1,11 +1,14 @@
 from flask import render_template, request, redirect, url_for
 import json
+from werkzeug.http import parse_options_header
+
 from application.models import HealthVis
 from application.forms import generate_form
 from datetime import datetime, timedelta
 import logging
 from application.settings import supported_types
 from google.appengine.api import memcache
+from google.appengine.ext import blobstore
 from uuid import uuid4
 import re
 
@@ -112,15 +115,41 @@ def save(id):
     if obj is None:
         return render_template("500.html")
 
+    upload_url = blobstore.create_upload_url(url_for('finish_save'))
+    #form = UploadForm()
+    return render_template("upload_data.html", obj=obj, upload_url=upload_url)
+
+def get_blob_key(field_name, blob_key=None):
+    try:
+        upload_file = request.files[field_name]
+        header = upload_file.headers['Content-Type']
+        parsed_header = parse_options_header(header)
+        blob_key = parsed_header[1]['blob-key']
+    except:
+        return None
+    return blob_key
+
+def finish_save():
+    blob_key = get_blob_key("fileup")
+    if blob_key is None:
+        return render_template("500.html")
+
+    blob_key = blobstore.BlobKey(blob_key)
+    blob_reader = blobstore.BlobReader(blob_key)
+    params = blob_reader.readline()
+
+    id = request.values['plotid']
+    obj = find_object(id)
     obj.saved = True
+    obj.d3params = params
     try:
         obj.put()
     except:
         return render_template("500.html")
 
-    if is_memcache_obj(id):
-        id='hs_%d' % obj.key().id()
-    return redirect(url_for('display', id=id))
+    return 'hs_%d' % obj.key().id()
+    #return redirect(url_for('display', id=id))
+    #return id
 
 def remove_unsaved():
     now = datetime.now()

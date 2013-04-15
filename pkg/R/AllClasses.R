@@ -8,6 +8,7 @@ HVServer = setRefClass("HVServer",
                        fields=list(
                          port="integer",
                          websocket="ANY",
+                         server="ANY",
                          msgCallback="function"))
                          
 #' healthvis class definition

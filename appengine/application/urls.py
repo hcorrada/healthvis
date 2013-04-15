@@ -19,6 +19,9 @@ app.add_url_rule('/embed/<string:id>', 'embed', view_func=views.embed)
 # save plot
 app.add_url_rule('/save/<string:id>', 'save', view_func=views.save)
 
+# finish saving plot
+app.add_url_rule('/upload/handler', 'finish_save', view_func=views.finish_save, methods=['POST'])
+
 # remove unsaved figures that are older than 6 hours
 app.add_url_rule('/tasks/remove_unsaved', 'remove_unsaved', view_func=views.remove_unsaved)
 

@@ -125,6 +125,30 @@ Healthvis.prototype._getParams = function(callback) {
     this._socket.sendRequest(message, callback);
 };
 
+Healthvis.prototype._savePlot = function(url, uploadURL) {
+    var self = this;
+
+    var callback = function(id) {
+        self._stopServer();
+        window.location.replace('/display/' + id);
+    };
+
+    this.initialize(false, url);
+    var message = {
+        action: 'savePlot',
+        data: uploadURL
+    }
+    this._socket.sendRequest(message, callback);
+};
+
+Healthvis.prototype._stopServer = function() {
+    var message = {
+        action: 'stopServer',
+        data: ''
+    }
+    this._socket.sendRequest(message, function() {})
+};
+
 Healthvis.prototype.update = function(formInput) {
         this._renderer.update(formInput);
 };
