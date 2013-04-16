@@ -68,57 +68,64 @@ function HealthvisIconArray() {
     this.group_colors = null;
     this.group_names = null;
     this.formdata = [];
-
-    this.y = d3.scale.linear().domain([0,100]).range([490,10]);
+	
+	this.w = 700;
+	this.h = 500;
+	this.legw = this.w/3.5;
+	this.legh = this.h/2.5;
+    this.y = d3.scale.linear().domain([0,100]).range([this.h*0.98,this.h*0.02]);
  
     // Need better way of setting plot dimensions
     this.init = function(elementId, d3Params) {
+		var dimensions = healthvis.getDimensions(this.w, this.h);
+		this.w = dimensions.width;
+		this.h = dimensions.height;
+		this.legw = this.w/3.5;
+		this.legh = this.h/2.5;
+	
         this.grid = d3.select('#main')
             .append('svg')
-            .attr('width', 700)
-            .attr('height', 500)
+            .attr('width', this.w)
+            .attr('height', this.h)
 	    .attr('class', 'chart');
 
-	this.flag = d3Params.obj_flag;
-	this.color_array = d3Params.color_array;
-	this.init_color = this.color_array.slice(0);
-	this.group_colors = d3Params.group_colors;
-	this.group_names = d3Params.group_names;
-	this.rows = d3Params.rows;
-	this.cols = d3Params.cols;
-	this.cats = d3Params.cats;
-	this.vtype = d3Params.vtype;
+		this.flag = d3Params.obj_flag;
+		this.color_array = d3Params.color_array;
+		this.init_color = this.color_array.slice(0);
+		this.group_colors = d3Params.group_colors;
+		this.group_names = d3Params.group_names;
+		this.rows = d3Params.rows;
+		this.cols = d3Params.cols;
+		this.cats = d3Params.cats;
+		this.vtype = d3Params.vtype;
 
-	this.pcts = new Array(this.rows+1); // Add 1 for the baseline category (asumed to be this.pcts[0])
+		this.pcts = new Array(this.rows+1); // Add 1 for the baseline category (asumed to be this.pcts[0])
 
-	this.covar = init_covar(this.cats);
-	
-	//this.ref_cats = d3Params.ref_cats;
+		this.covar = init_covar(this.cats);
 
+		this.c_tmp = d3Params.coefs;
 
-	this.c_tmp = d3Params.coefs;
-
-	// Make a 2-D array so we can loop through and get probabilities for each category
-	var coefs = new Array(this.cols);
-	for(var i=0; i < this.cols; i++){
-		coefs[i] = new Array(this.rows);
-		for(var j=0; j < this.rows; j++){
-			coefs[i][j] = this.c_tmp[i*this.rows+j];
+		// Make a 2-D array so we can loop through and get probabilities for each category
+		var coefs = new Array(this.cols);
+		for(var i=0; i < this.cols; i++){
+			coefs[i] = new Array(this.rows);
+			for(var j=0; j < this.rows; j++){
+				coefs[i][j] = this.c_tmp[i*this.rows+j];
+			}
 		}
-	}
 
-	this.coefs = coefs;
+		this.coefs = coefs;
 
         this.data = [];
 
 	// These things should all depend on plot dimensions
-        var cellWidth = 30;
-        var cellHeight = 39;
-        var start = 10;
-        var xpos = start+25;
+        var cellWidth = this.w/23;
+        var cellHeight = this.h/13;
+        var start = this.w/70;
+        var xpos = start+this.w/28;
         var ypos = start;
-        var xBuffer = 40;
-        var yBuffer = 49;
+        var xBuffer = cellWidth+start;
+        var yBuffer = cellHeight+start;
         var count = 0;
 
 	// Initialize an object giving position and color info
@@ -136,7 +143,7 @@ function HealthvisIconArray() {
   	        xpos += xBuffer;
 	        count += 1;
      	    }
-           xpos = start+25;
+           xpos = start+this.w/28;
            ypos += yBuffer;
         }
 
@@ -164,32 +171,34 @@ function HealthvisIconArray() {
 	
 	this.grid.append('svg:g')
                 .attr('class', 'y axis')
-                .attr('transform', 'translate(30,0)')
+                .attr('transform', 'translate('+this.w/24+',0)')
                 .call(yAxis);
 
 	// Add legend
 
 	var legend = this.grid.append('g')
 		  .attr('class', 'legend')
-		  .attr('x', 700 - 240)
-		  .attr('y', 125)
-		  .attr('height', 200)
-		  .attr('width', 200);
+		  .attr('x', this.w*(2/3))
+		  .attr('y', this.h/4)
+		  .attr('height', this.legh)
+		  .attr('width', this.legw);
+		  
+	var lh = this.legh;
 
 	legend.selectAll('rect')
 	   .data(this.group_colors).enter().append('rect')
-	  .attr('x', 700 - 240)
-	  .attr('y', function(d,i){return i*20+100;})
-	  .attr('width', 10)
-	  .attr('height', 10)
+	  .attr('x', this.w*(2/3))
+	  .attr('y', function(d,i){return i*(lh/15)+lh/2.2;})
+	  .attr('width', this.legw/20)
+	  .attr('height', this.legh/20)
 	  .style('fill', function(d) { return d; });
 
 	var group_names = this.group_names;
 
 	legend.selectAll('text')
 	   .data(this.group_names).enter().append('text')
-	  .attr('x', 700 - 220)
-	  .attr('y', function(d,i){return i*20 + 110;})
+	  .attr('x', this.w*(2/3)+(1/35)*this.w)
+	  .attr('y', function(d,i){return i*(lh/15)+lh/2;})
 	  .text(function(d) { return d; });
 
     };
