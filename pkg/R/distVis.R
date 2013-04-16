@@ -14,12 +14,10 @@
 #' and CSS code needed to generate the interactive graphic
 #' @export
 #' @examples
-#' # Let's use random data drawn from a binomial distribution, but add interesting names.
-#' testData <- matrix(rbinom(n=100*100,prob=.1,size=10),ncol=100)
-#' Put something here
+#' testData <- as.matrix(mtcars)
 #' distVis(testData)
 
-distVis <- function(mat,colors = c("#D33F6A","#E99A2C","#E2E6BD"),plot.title="Distance Matrix", plot=TRUE, gaeDevel=TRUE,url=NULL,...){
+distVis <- function(mat,colors = c("#D33F6A","#E99A2C","#E2E6BD"),plot.title="Distance Matrix", plot=TRUE, gaeDevel=FALSE,url=NULL,...){
   
   if(class(mat) != "matrix"){
 	stop("mat must be a matrix object")
