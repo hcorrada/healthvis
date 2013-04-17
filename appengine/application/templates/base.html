@@ -12,7 +12,7 @@
 </head>
 
 <body>
-<div class="container" id="maincontent">
+<div class="container-fluid" id="maincontent">
     {%  block header_block %} <!-- header goes in here -->{% endblock %}
     {%  block plot_block %} <!-- plot goes in here --> {% endblock %}
     {% block content_tail %} <!-- plot tail goes in here -->{% endblock content_tail %}
@@ -32,19 +32,7 @@
 <script src="/static/js/healthvis.js"></script>
 <script src="/static/js/{{ obj.type }}.js"></script>
 
-<script>
-    var url = "{{ url_for('get_params', plotid=plot_id) }}";
-    var saved = true;
-
-    {% if not obj.saved %}
-    saved = false;
-    url = "{{ obj.d3params }}";
-    {% endif %}
-
-    healthvis.initialize(saved, url);
-    healthvis.visualize('#main');
-</script>
-
+{% block healthvis_call %} <!-- healthvis call goes here --> {% endblock %}
 {% block tail_script %} <!-- defer-compatible JS block --> {% endblock %}
 
 <script>

@@ -21,13 +21,19 @@ function HealthvisPaired() {
     };
          
       var color = d3.scale.category10(); 
+	  this.w = 700;
+	  this.h = 650;
 
     this.visualize = function(){
 	
-	  var width = 700,
-		  height = 650;
+	  var dim = healthvis.getDimensions(this.w, this.h);
+	  this.w = dim.width;
+	  this.h = dim.height;
+	  
+	  var width = this.w,
+		  height = this.h;
 		  size = 600/this.n;
-          padding = 29.5;
+          padding = this.w/23;
        
       var x = d3.scale.linear()
           .range([padding / 2, size - padding / 2]);
@@ -120,23 +126,23 @@ function HealthvisPaired() {
 	  // Make Legend
 	  this.legend = svg.append('g')
 			  .attr('class', 'legend')
-			  .attr('x', 590)
-			  .attr('y', 125)
-			  .attr('height', 100)
-			  .attr('width', 80);
+			  .attr('x', width*0.85)
+			  .attr('y', height*0.2)
+			  .attr('height', height/6.5)
+			  .attr('width', width/8.75);
 
 		this.legend.selectAll('rect')
 		   .data(this.levels[column]).enter().append('rect')
-		  .attr('x', 590)
-		  .attr('y', function(d,i){return i*20;})
-		  .attr('width', 10)
-		  .attr('height', 10)
+		  .attr('x', width*0.85)
+		  .attr('y', function(d,i){return height*0.03+i*height*0.03;})
+		  .attr('width', width/70)
+		  .attr('height', height/65)
 		  .style('fill', function(d) { return color(d); });
 
 		this.legend.selectAll('text')
 		   .data(this.levels[column]).enter().append('text')
-		  .attr('x', 610)
-		  .attr('y', function(d,i){return i*20 + 10;})
+		  .attr('x', width*0.87)
+		  .attr('y', function(d,i){return height*0.04+i*height*0.03;})
 		  .text(function(d) { return d; });
       
       function plot(p) {
@@ -205,29 +211,31 @@ function HealthvisPaired() {
     };
  
     this.update = function(formdata){
-    
-    var data= this.json;
-    var column = formdata[0].value;
-       var cell = this.svg.selectAll("circle")
+	
+		var data= this.json;
+		var column = formdata[0].value;
+		var cell = this.svg.selectAll("circle")
             .transition()
             .style("fill", function(d) { 
               return color(d[column]);
             });   
 		
+		var width = this.w;
+		var height = this.h;
 		this.legend.selectAll('rect').data([]).exit().remove();
 		this.legend.selectAll('text').data([]).exit().remove();
 		this.legend.selectAll('rect')
 		   .data(this.levels[column]).enter().append('rect')
-		  .attr('x', 590)
-		  .attr('y', function(d,i){return i*20;})
-		  .attr('width', 10)
-		  .attr('height', 10)
+		  .attr('x', width*0.85)
+		  .attr('y', function(d,i){return height*0.03+i*height*0.03;})
+		  .attr('width', width/70)
+		  .attr('height', height/65)
 		  .style('fill', function(d){return color(d);});
 
 		this.legend.selectAll('text')
 		   .data(this.levels[column]).enter().append('text')
-		  .attr('x', 610)
-		  .attr('y', function(d,i){return i*20 + 10;})
+		  .attr('x', width*0.87)
+		  .attr('y', function(d,i){return height*0.04+i*height*0.03;})
 		  .text(function(d) { return d; });
     };
 }

@@ -8,6 +8,21 @@
 </div>
 {% endblock %}
 
+{%  block healthvis_call %}
+<script>
+    {% if obj.saved %}
+    var url = "{{ url_for('get_params', plotid=plot_id) }}",
+        saved = true;
+    {% else %}
+     var saved = false,
+         url = "{{ obj.d3params }}";
+    {% endif %}
+
+    healthvis.initialize(saved, url, '#main', null);
+    healthvis.visualize();
+</script>
+{%  endblock %}
+
 {% block plot_block %}
 <div class="row">
     <div class="span8" id="main">

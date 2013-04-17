@@ -15,7 +15,7 @@ function colorize(v, median, colors){
 function HealthvisHeatmap() {	
     this.width=650;
     this.height=450;
-    this.buffer=50;
+    this.buffer=this.width/13;
     this.formdata = [];
     this.input = null;
     this.data = null;
@@ -34,6 +34,13 @@ function HealthvisHeatmap() {
     this.init_rank = null;
 
     this.init = function(elementId, d3Params) {
+	
+		var dimensions = healthvis.getDimensions(this.width, this.height);
+				
+		this.width = dimensions.width;
+		this.height = dimensions.height;
+		this.buffer=this.width/13;	
+		
         this.grid = d3.select('#main')
             .append('svg')
             .attr('width', this.width+this.buffer)
@@ -146,19 +153,20 @@ function HealthvisHeatmap() {
 			    .enter().append("svg:g")
 			    .attr("class", "row");
 
+	var width = this.width;
 	// Change the 2.5 and 20 - they are rough and hardcoded
 	this.col.append("text")
 		.attr("x", function(d,i){return i*boxw+buff+boxw/2.5;})
-		.attr("y", this.buffer-20)
+		.attr("y", this.buffer-width/65)
 		.attr("dy", ".7em")
 		.attr("text-anchor", "start")
-		.attr("transform", function(d,i){return "rotate(-90," + (i*boxw+buff+boxw/2.5) + "," + (buff-20) +")";})
+		.attr("transform", function(d,i){return "rotate(-90," + (i*boxw+buff+boxw/2.5) + "," + (buff-width/65) +")";})
 		.text(function(d,i){return cn[i];})
 		.style("font-size", 8+"px");
 
 
 	this.rtext = this.row.append("text")
-		.attr("x", this.buffer-10)
+		.attr("x", this.buffer-width/65)
 		.attr("y", function(d,i){return i*boxh+buff+boxh/5;})
 		.attr("dy", ".7em")
 		.attr("text-anchor", "end")

@@ -84,13 +84,18 @@ function Healthvis()  {
     this._paramsURL = null;
     this._socket = null;
     this._saved = null;
+    this._elementId = null;
+    this._embedIds = null;
 }
 
 
 Healthvis.instance = new Healthvis();
 
-Healthvis.prototype.initialize = function(saved, url) {
+Healthvis.prototype.initialize = function(saved, url, elementId, emebedIds) {
     this._saved = saved;
+    this._elementId = elementId;
+    this._embedIds = emebedIds;
+
     if (!saved) {
         this._socket = HVSocket.instance;
         this._socket.initialize(url);
@@ -103,9 +108,10 @@ Healthvis.prototype.register = function (fn) {
         this._renderer = fn;
 };
 
-Healthvis.prototype.visualize = function(elementId) {
+Healthvis.prototype.visualize = function() {
         var renderer = this._renderer,
-            self = this;
+            self = this,
+            elementId = this._elementId;
 
         var callback = function(json) {
             renderer.init(elementId, json);
@@ -122,6 +128,30 @@ Healthvis.prototype.visualize = function(elementId) {
         } else {
             this._getParams(callback);
         }
+};
+
+Healthvis.prototype.getDimensions = function(inputWidth, inputHeight) {
+    var height = inputHeight,
+        width = inputWidth,
+        embedIds = this._embedIds,
+        elementId = this._elementId;
+
+    if (embedIds) {
+        var totalHeight = $(window).height();
+
+        height = totalHeight - $(embedIds.header).height() - $(embedIds.footer).height();
+        width = $(elementId).width();
+
+
+        height = (height > 0 && height < inputHeight) ? height : inputHeight;
+        width = (width > 0 && width < inputWidth) ? width : inputWidth;
+    }
+
+    return {width: width, height: height};
+};
+
+Healthvis.prototype.update = function(formInput) {
+    this._renderer.update(formInput);
 };
 
 Healthvis.prototype._getParams = function(callback) {
@@ -155,9 +185,6 @@ Healthvis.prototype._stopServer = function() {
     this._socket.sendRequest(message, function() {})
 };
 
-Healthvis.prototype.update = function(formInput) {
-        this._renderer.update(formInput);
-};
 
 var healthvis = Healthvis.instance;
 
@@ -169,10 +196,6 @@ $(document).ready(function () {
         } else {
             console.log('Not valid')
         }
-    });
-
-    $('#main').on('custom', function() {
-
     });
 });
 
