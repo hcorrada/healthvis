@@ -32,3 +32,4 @@ Collate:
     'listHealthVis.R'
     'zzz.R'
     'pairedVis.R'
+    'distVis.R'

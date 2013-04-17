@@ -1,4 +1,5 @@
 export(accuracyTableVis)
+export(distVis)
 export(heatmapVis)
 export(iconArrayVis)
 export(listHealthVis)

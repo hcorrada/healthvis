@@ -82,7 +82,7 @@ distVis <- function(mat,colors = c("#D33F6A","#E99A2C","#E2E6BD"),plot.title="Di
                       varList=varList,
                       d3Params=d3Params,
                       gaeDevel=gaeDevel,
-                      url=NULL)
+                      url=url)
   
   if(plot){
     plot(healthvisObj)

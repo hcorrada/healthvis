@@ -28,6 +28,11 @@ function HealthvisDist() {
     this.distMetric = null;
 
     this.init = function(elementId, d3Params) {
+        var dimensions = healthvis.getDimensions(this.width, this.height);
+
+        this.width = dimensions.width;
+        this.height = dimensions.height;
+
         this.grid = d3.select('#main')
           .append('svg')
           .attr('width', this.width+this.buffer)
