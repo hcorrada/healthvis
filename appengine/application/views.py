@@ -59,16 +59,16 @@ def post_data():
         return "error"
     return 'hs_%d' % obj.key().id()
 
-def is_memcache_obj(id):
-    m=re.search(r"h(s|m)_(\d+)", id)
+def is_memcache_obj(plotid):
+    m=re.search(r"h(s|m)_(\d+)", plotid)
     if m is None:
         return False
 
     return m.group(1) == 'm'
 
-def find_object(id):
+def find_object(plotid):
     # parse id to see if the object is in memcache or datastore
-    m=re.search(r"h(s|m)_(\d+)", id)
+    m=re.search(r"h(s|m)_(\d+)", plotid)
     if m is None:
         return None
 
@@ -80,14 +80,26 @@ def find_object(id):
         obj = HealthVis.get_by_id(storeid)
     elif m.group(1) == 'm':
         # object in memcache
-        obj = memcache.get(id)
+        obj = memcache.get(plotid)
     else:
         return None
 
     return obj
 
-def display(id):
-    obj = find_object(id)
+def display(plotid):
+    obj = find_object(plotid)
+    if obj is None:
+        return render_template("500.html")
+    form = generate_form(obj, request.args)
+
+    # TODO: remove this check from local version
+    if obj.type not in supported_types:
+        return render_template("500.html")
+
+    return render_template("display.html", obj=obj, form=form, plot_id=plotid)
+
+def embed(plotid):
+    obj = find_object(plotid)
     if obj is None:
         return render_template("500.html")
     form = generate_form(obj)
@@ -96,27 +108,14 @@ def display(id):
     if obj.type not in supported_types:
         return render_template("500.html")
 
-    return render_template("display.html", obj=obj, form=form, plot_id=id)
+    return render_template("embed.html", obj=obj, form=form, plot_id=plotid)
 
-def embed(id):
-    obj = find_object(id)
-    if obj is None:
-        return render_template("500.html")
-    form = generate_form(obj)
-
-    # TODO: remove this check from local version
-    if obj.type not in supported_types:
-        return render_template("500.html")
-
-    return render_template("embed.html", obj=obj, form=form, plot_id=id)
-
-def save(id):
-    obj = find_object(id)
+def save(plotid):
+    obj = find_object(plotid)
     if obj is None:
         return render_template("500.html")
 
     upload_url = blobstore.create_upload_url(url_for('finish_save'))
-    #form = UploadForm()
     return render_template("upload_data.html", obj=obj, upload_url=upload_url)
 
 def get_blob_key(field_name, blob_key=None):
@@ -138,8 +137,8 @@ def finish_save():
     blob_reader = blobstore.BlobReader(blob_key)
     params = blob_reader.readline()
 
-    id = request.values['plotid']
-    obj = find_object(id)
+    plotid = request.values['plotid']
+    obj = find_object(plotid)
     obj.saved = True
     obj.d3params = params
     try:
@@ -164,8 +163,8 @@ def remove_unsaved():
             logging.info("Couldn't delete object " + str(obj))
             continue
 
-def get_params(id):
-    obj = find_object(id)
+def get_params(plotid):
+    obj = find_object(plotid)
     if obj is None:
         return render_template("500.html")
     return obj.d3params

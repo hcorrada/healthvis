@@ -31,14 +31,14 @@
 
 {% block content_tail %}
 {% if not obj.saved %}
-    <a class="btn btn-primary" href=" {{ url_for('save', id=plot_id) }}">
+    <button type="button" class="btn-primary" id="savebtn">
         <i class="icon-ok icon-white"></i>
         Save to HealthVis
-    </a>
+    </button>
 {% else  %}
-    <p>Permalink: <a href="{{ url_for('display', id=plot_id, _external=True) }}">{{ url_for('display', id=plot_id, _external=True) }}</a></p>
+    <p>Permalink: <a href="{{ url_for('display', plotid=plot_id, _external=True) }}">{{ url_for('display', plotid=plot_id, _external=True) }}</a></p>
     <button type="button" class="btn" data-toggle="collapse" data-target="#embedurl">Embed</button>
-    <div id="embedurl" class="collapse">{{ '<iframe width="700" height="535" src="' + url_for('embed', id=plot_id, _external=True) + '" frameborder="0"></iframe>' }}</div>
+    <div id="embedurl" class="collapse">{{ '<iframe width="700" height="535" src="' + url_for('embed', plotid=plot_id, _external=True) + '" frameborder="0"></iframe>' }}</div>
 {% endif %}
 {% endblock content_tail %}
 
@@ -72,6 +72,15 @@
 
     $('#embedurl').on('hide', function() {
         fnDeSelect();
+    });
+
+    $(document).ready(function() {
+        $('#savebtn').click(function() {
+            //TODO: find safer way to construct url
+            var url = '/save/' + "{{ plot_id }}" + '?' + $('#covariate-form').serialize();
+            console.log(url)
+            window.location.replace(url);
+        })
     })
 </script>
 {% endblock tail_script%}

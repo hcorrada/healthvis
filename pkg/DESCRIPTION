@@ -17,11 +17,11 @@ Suggests:
     roxygen2,
     survival,
     nnet,
-    colorspace,
-    httpuv
+    colorspace
 Depends:
     RCurl,
-    rjson
+    rjson,
+    httpuv
 Collate:
     'AllClasses.R'
     'healthvisMethods.R'

@@ -104,11 +104,17 @@ Healthvis.prototype.register = function (fn) {
 };
 
 Healthvis.prototype.visualize = function(elementId) {
-        var renderer = this._renderer;
+        var renderer = this._renderer,
+            self = this;
 
         var callback = function(json) {
             renderer.init(elementId, json);
             renderer.visualize();
+
+            if (document.location.search.length) {
+                var newcov = $('#covariate-form').serializeArray();
+                self.update(newcov);
+            }
         };
 
         if (this._saved) {
@@ -130,7 +136,7 @@ Healthvis.prototype._savePlot = function(url, uploadURL) {
 
     var callback = function(json) {
         self._stopServer();
-        window.location.replace('/display/' + json.id);
+        window.location.replace('/display/' + json.id + window.location.search);
     };
 
     this.initialize(false, url);
@@ -163,6 +169,10 @@ $(document).ready(function () {
         } else {
             console.log('Not valid')
         }
+    });
+
+    $('#main').on('custom', function() {
+
     });
 });
 
