@@ -6,6 +6,7 @@
 #' by various clusterings and recalculate distances using various metrics.
 #'
 #' @param mat A matrix to visualize
+#' @param factors A vector of length nrow(mat) with the factors for each row value
 #' @param colors Vector of colors that the heatmap should range through (3 colors: low, medium, high)
 #' @param plot.title The title of the plot to appear on the HTML page
 #' @param plot If TRUE a browser launches and displays the interactive graphic.
@@ -15,9 +16,10 @@
 #' @export
 #' @examples
 #' testData <- as.matrix(mtcars)
-#' distVis(testData)
+#' cost <- rep(c("cheap","expensive","moderate",c(5,5,22)))
+#' distVis(testData,factors=cost)
 
-distVis <- function(mat,colors = c("#D33F6A","#E99A2C","#E2E6BD"),plot.title="Distance Matrix", plot=TRUE, gaeDevel=FALSE,url=NULL,...){
+distVis <- function(mat,factors=NULL,colors = c("#D33F6A","#E99A2C","#E2E6BD"),plot.title="Distance Matrix", plot=TRUE, gaeDevel=FALSE,url=NULL,...){
   
   if(class(mat) != "matrix"){
 	stop("mat must be a matrix object")
@@ -35,7 +37,10 @@ distVis <- function(mat,colors = c("#D33F6A","#E99A2C","#E2E6BD"),plot.title="Di
   nd <- length(distMethods)
   nc <- length(clustMethods)
   nr <- nrow(mat)
-
+  
+  if(is.null(factors)) factors = rep(1,nr)
+  if(!is.null(factors)) factors = factor(factors)
+    
   distMats = lapply(distMethods,function(i) dist(mat,method = i))
   names(distMats) <-distMethods
   levels = lapply(clustMethods,function(i){lapply(1:nd,function(j){hc=(hclust(distMats[[j]],method=i)$order-1)})})
@@ -53,6 +58,9 @@ distVis <- function(mat,colors = c("#D33F6A","#E99A2C","#E2E6BD"),plot.title="Di
   minV   = minmax[1,]
   maxV   = minmax[2,]
 
+  if(is.null(factors)) factors = factor(rep("white",nr))
+  if(!is.null(factors)) factors = factor(factors)
+
   defaultDist="euclidean"
   defaultClust ="average"
 
@@ -61,6 +69,7 @@ distVis <- function(mat,colors = c("#D33F6A","#E99A2C","#E2E6BD"),plot.title="Di
             permutations=levels,
             distNames = distMethods,
             clustNames= clustMethods,
+            factors = factors,
             colors=colors,
             min = minV,
             max = maxV,
