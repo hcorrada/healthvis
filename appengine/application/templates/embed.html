@@ -6,15 +6,23 @@
         <small>
         <p> created with the <a href="http://healthvis.org">healthvis</a> R package
             and powered by <a href="http://d3js.org">Data Driven Documents</a><br>
-        open in healthvis: <a href="{{ url_for('display', id=plot_id, _external=True) }}" target="new">{{ url_for('display', id=plot_id, _external=True) }}</a>
+        open in healthvis: <a href="{{ url_for('display', plotid=plot_id, _external=True) }}" target="new">{{ url_for('display', plotid=plot_id, _external=True) }}</a>
         </p>
         </small>
     </div>
 {% endblock %}
-
-{%  block init_healthvis %}
+{%  block healthvis_call %}
     <script type="text/javascript">
-        var healthvis = new Healthvis("#main", {header: '#embedheader', footer: '#embedfooter'});
+        {% if obj.saved %}
+        var url = "{{ url_for('get_params', plotid=plot_id) }}",
+            saved = true;
+        {% else %}
+        var saved = false,
+            url = "{{ obj.d3params }}";
+        {% endif %}
+
+        healthvis.initialize(saved, url, '#main', {header: '#embedheader', footer: '#embedfooter'});
+        healthvis.visualize();
     </script>
 {%  endblock %}
 

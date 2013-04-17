@@ -86,29 +86,24 @@ def find_object(plotid):
 
     return obj
 
-def display(plotid):
+def make_display(plotid, requestargs, template):
     obj = find_object(plotid)
     if obj is None:
         return render_template("500.html")
-    form = generate_form(obj, request.args)
 
     # TODO: remove this check from local version
     if obj.type not in supported_types:
         return render_template("500.html")
 
-    return render_template("display.html", obj=obj, form=form, plot_id=plotid)
+    form = generate_form(obj, requestargs)
+    return render_template(template, obj=obj, form=form, plot_id=plotid)
+
+def display(plotid):
+    return make_display(plotid, request.args, "display.html")
 
 def embed(plotid):
-    obj = find_object(plotid)
-    if obj is None:
-        return render_template("500.html")
-    form = generate_form(obj)
+    return make_display(plotid, request.args, "embed.html")
 
-    # TODO: remove this check from local version
-    if obj.type not in supported_types:
-        return render_template("500.html")
-
-    return render_template("embed.html", obj=obj, form=form, plot_id=plotid)
 
 def save(plotid):
     obj = find_object(plotid)
