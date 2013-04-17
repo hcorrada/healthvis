@@ -33,7 +33,7 @@
 <script src="/static/js/{{ obj.type }}.js"></script>
 
 <script>
-    var url = "{{ url_for('get_params', id=plot_id) }}";
+    var url = "{{ url_for('get_params', plotid=plot_id) }}";
     var saved = true;
 
     {% if not obj.saved %}
@@ -89,7 +89,7 @@
 
     $('#embedurl').on('hide', function() {
         fnDeSelect();
-    })
+    });
 </script>
 </body>
 </html>
