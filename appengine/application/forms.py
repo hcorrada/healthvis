@@ -21,7 +21,7 @@ def generate_continuous_field(values):
 def generate_factor_field(values):
     return FactorCovariate(choices=values)
 
-def generate_form(obj):
+def generate_form(obj, requestargs=None):
     tmp_var_list = json.loads(obj.var_list)
     var_values = [tmp_var_list[name] for name in obj.var_names]
 
@@ -30,10 +30,14 @@ def generate_form(obj):
 
     field = None
     for type,name,values in zip(obj.var_type,obj.var_names,var_values):
+        form_val = requestargs.get(name)
         if type == 'continuous':
-            field = ContinuousCovariate(default=values[0], min=values[0], max=values[1])
+            form_val = float(form_val) if form_val is not None else None
+            default = values[0] if form_val is None or form_val<values[0] or form_val>values[1] else form_val
+            field = ContinuousCovariate(default=default, min=values[0], max=values[1])
         elif type == 'factor':
-            field = FactorCovariate(choices=zip(values,values),default=values[0])
+            default = values[0] if form_val is None or form_val not in values else form_val
+            field = FactorCovariate(choices=zip(values,values),default=default)
 
         setattr(CovariateForm, name, field)
 
