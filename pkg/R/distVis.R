@@ -40,7 +40,8 @@ distVis <- function(mat,factors=NULL,colors = c("#D33F6A","#E99A2C","#E2E6BD"),p
   
   if(is.null(factors)) factors = rep(1,nr)
   if(!is.null(factors)) factors = factor(factors)
-    
+  if(length(factors)!=nr){stop("Err: factors aren't of length matrix row"}   
+ 
   distMats = lapply(distMethods,function(i) dist(mat,method = i))
   names(distMats) <-distMethods
   levels = lapply(clustMethods,function(i){lapply(1:nd,function(j){hc=(hclust(distMats[[j]],method=i)$order-1)})})
@@ -58,7 +59,7 @@ distVis <- function(mat,factors=NULL,colors = c("#D33F6A","#E99A2C","#E2E6BD"),p
   minV   = minmax[1,]
   maxV   = minmax[2,]
 
-  if(is.null(factors)) factors = factor(rep("white",nr))
+  if(is.null(factors)) factors = factor(rep(1,nr))
   if(!is.null(factors)) factors = factor(factors)
 
   defaultDist="euclidean"
