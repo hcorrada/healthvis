@@ -62,9 +62,6 @@ distVis <- function(mat,factors=NULL,colors = c("#D33F6A","#E99A2C","#E2E6BD"),p
   if(is.null(factors)) factors = factor(rep(1,nr))
   if(!is.null(factors)) factors = factor(factors)
 
-  defaultDist="euclidean"
-  defaultClust ="average"
-
   # Parameters to pass to javascript
   d3Params <- list(distMats=distMats,
             permutations=levels,
