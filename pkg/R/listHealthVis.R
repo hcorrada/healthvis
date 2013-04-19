@@ -8,4 +8,5 @@ listHealthVis<- function(){
   print("iconArrayVis() - Creates interactive icon array")
   print("heatmapVis() - Creates interactive heatmap")
   print("pairedVis() - Creates interactive scatterplot matrix")
+  print("distVis() - Creates interactive heatmap of distance matrix")
 }

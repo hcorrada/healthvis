@@ -4,3 +4,7 @@ pkg/.RData
 appengine/.idea
 .DS_Store
 
+.Rproj.user
+*.pyc
+*.Rproj
+
