@@ -66,7 +66,6 @@ if (!isGeneric("plot"))
 #' 
 #' @param x the healthvis object to plot
 #' 
-#' @importMethodsFrom graphics plot
 #' @exportMethod plot
 setMethod("plot", signature=c("healthvis","missing"),
           function(x,y,...) {
