@@ -21,7 +21,7 @@ function HealthvisPaired() {
     };
          
       var color = d3.scale.category10(); 
-	  this.w = 700;
+	  this.w = 700; //Size of entire area
 	  this.h = 650;
 
     this.visualize = function(){
@@ -30,10 +30,10 @@ function HealthvisPaired() {
 	  this.w = dim.width;
 	  this.h = dim.height;
 	  
-	  var width = this.w,
-		  height = this.h;
-		  size = 600/this.n;
-          padding = this.w/23;
+	  var width = this.w*0.9,
+		  height = this.h*0.9;
+		  size = height/this.n;
+          padding = height*.04;
        
       var x = d3.scale.linear()
           .range([padding / 2, size - padding / 2]);
@@ -85,8 +85,8 @@ function HealthvisPaired() {
           .on("brushend", brushend);
      
       var svg = this.div.append("svg")
-   		.attr("width", width)
-			.attr("height", height)
+   		.attr("width", this.w)
+			.attr("height", this.h)
         .append("g")
           .attr("transform", "translate(" + padding + "," + padding / 2 + ")");
      
@@ -133,15 +133,15 @@ function HealthvisPaired() {
 
 		this.legend.selectAll('rect')
 		   .data(this.levels[column]).enter().append('rect')
-		  .attr('x', width*0.85)
+		  .attr('x', width*0.93)
 		  .attr('y', function(d,i){return height*0.03+i*height*0.03;})
-		  .attr('width', width/70)
-		  .attr('height', height/65)
+		  .attr('width', width*0.01)
+		  .attr('height', height*0.01)
 		  .style('fill', function(d) { return color(d); });
 
 		this.legend.selectAll('text')
 		   .data(this.levels[column]).enter().append('text')
-		  .attr('x', width*0.87)
+		  .attr('x', width*0.95)
 		  .attr('y', function(d,i){return height*0.04+i*height*0.03;})
 		  .text(function(d) { return d; });
       
@@ -220,21 +220,21 @@ function HealthvisPaired() {
               return color(d[column]);
             });   
 		
-		var width = this.w;
+		var width = this.w*0.9;
 		var height = this.h;
 		this.legend.selectAll('rect').data([]).exit().remove();
 		this.legend.selectAll('text').data([]).exit().remove();
 		this.legend.selectAll('rect')
 		   .data(this.levels[column]).enter().append('rect')
-		  .attr('x', width*0.85)
+		  .attr('x', width*0.93)
 		  .attr('y', function(d,i){return height*0.03+i*height*0.03;})
-		  .attr('width', width/70)
-		  .attr('height', height/65)
+		  .attr('width', width*0.01)
+		  .attr('height', height*0.01)
 		  .style('fill', function(d){return color(d);});
 
 		this.legend.selectAll('text')
 		   .data(this.levels[column]).enter().append('text')
-		  .attr('x', width*0.87)
+		  .attr('x', width*0.95)
 		  .attr('y', function(d,i){return height*0.04+i*height*0.03;})
 		  .text(function(d) { return d; });
     };
