@@ -105,13 +105,13 @@ def embed(plotid):
     return make_display(plotid, request.args, "embed.html")
 
 
-def save(plotid):
+def save(plotid, query):
     obj = find_object(plotid)
     if obj is None:
         return render_template("500.html")
 
     upload_url = blobstore.create_upload_url(url_for('finish_save'))
-    return render_template("upload_data.html", obj=obj, upload_url=upload_url)
+    return render_template("upload_data.html", obj=obj, upload_url=upload_url, query=query)
 
 def get_blob_key(field_name, blob_key=None):
     try:
@@ -126,11 +126,13 @@ def get_blob_key(field_name, blob_key=None):
 def finish_save():
     blob_key = get_blob_key("fileup")
     if blob_key is None:
-        return render_template("500.html")
+        return "error"
 
     blob_key = blobstore.BlobKey(blob_key)
     blob_reader = blobstore.BlobReader(blob_key)
     params = blob_reader.readline()
+
+    logging.debug("read params:")
 
     plotid = request.values['plotid']
     obj = find_object(plotid)
@@ -139,8 +141,9 @@ def finish_save():
     try:
         obj.put()
     except:
-        return render_template("500.html")
+        return "error"
 
+    logging.debug("saved object: %d" % obj.key().id())
     return 'hs_%d' % obj.key().id()
     #return redirect(url_for('display', id=id))
     #return id
