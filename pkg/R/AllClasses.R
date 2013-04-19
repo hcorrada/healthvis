@@ -2,8 +2,7 @@
 
 #' healthvis socket class definition
 #' 
-#' @importClassesFrom httpuv WebSocket
-#' @exportClass HVSocket
+#' @exportClass HVServer
 HVServer = setRefClass("HVServer",
                        fields=list(
                          port="integer",
