@@ -10,7 +10,7 @@ Saving to Healthvis...
 <script src="/static/js/healthvis.js"></script>
 <script type="text/javascript">
     var url = "{{ obj.d3params }}";
-    healthvis._savePlot(url, "{{ upload_url }}");
+    healthvis._savePlot(url, "{{ upload_url }}", "{{ query|safe }}");
 </script>
 </body>
 

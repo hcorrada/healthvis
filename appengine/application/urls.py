@@ -17,7 +17,7 @@ app.add_url_rule('/display/<string:plotid>', 'display', view_func=views.display)
 app.add_url_rule('/embed/<string:plotid>', 'embed', view_func=views.embed)
 
 # save plot
-app.add_url_rule('/save/<string:plotid>', 'save', view_func=views.save)
+app.add_url_rule('/save/<string:plotid>/<string:query>', 'save', view_func=views.save)
 
 # finish saving plot
 app.add_url_rule('/upload/handler', 'finish_save', view_func=views.finish_save, methods=['POST'])

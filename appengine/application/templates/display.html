@@ -92,7 +92,7 @@
     $(document).ready(function() {
         $('#savebtn').click(function() {
             //TODO: find safer way to construct url
-            var url = '/save/' + "{{ plot_id }}" + '?' + $('#covariate-form').serialize();
+            var url = '/save/' + "{{ plot_id }}" + '/' + $('#covariate-form').serialize();
             console.log(url)
             window.location.replace(url);
         })

@@ -161,12 +161,16 @@ Healthvis.prototype._getParams = function(callback) {
     this._socket.sendRequest(message, callback);
 };
 
-Healthvis.prototype._savePlot = function(url, uploadURL) {
-    var self = this;
+Healthvis.prototype._savePlot = function(url, uploadURL, query) {
+    var self = this,
+        query = query;
 
     var callback = function(json) {
         self._stopServer();
-        window.location.replace('/display/' + json.id + window.location.search);
+        var url='/display/' + json.id + '?' + query;
+        console.log(url);
+        console.log(encodeURI(url));
+        window.location.replace(url);
     };
 
     this.initialize(false, url);
