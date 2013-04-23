@@ -34,7 +34,7 @@ corVis <- function(mat,factors=NULL,fun=cor,use="everything",colors = c("#003EFF
   if(is.null(rownames(mat))){rownames(mat) = 1:nrow(mat)}
 
   distMethods <- c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski")
-  clustMethods<- c("average", "single", "complete", "ward", "mcquitty", "median", "centroid")
+  clustMethods<- c("complete", "single", "average", "ward", "mcquitty", "median", "centroid")
   corMethods <- c("pearson","kendall","spearman")
 
   nd <- length(distMethods)
@@ -48,6 +48,7 @@ corVis <- function(mat,factors=NULL,fun=cor,use="everything",colors = c("#003EFF
   distMats = lapply(distMethods,function(i) dist(mat,method = i))
   names(distMats) <-distMethods
   corMats  = lapply(corMethods,function(i) fun(t(mat),method= i,use=use))
+  #corMats  = lapply(corMethods,function(i) {x= fun(t(mat),method= i,use=use); x[lower.tri(x,diag=TRUE)]})
   names(corMats)  <-corMethods
   levels = lapply(clustMethods,function(i){lapply(1:nd,function(j){hc=(hclust(distMats[[j]],method=i)$order-1)})})
   names(levels) = clustMethods
@@ -55,12 +56,10 @@ corVis <- function(mat,factors=NULL,fun=cor,use="everything",colors = c("#003EFF
   for(i in 1:nc){
     names(levels[[i]])<-distMethods
   }
-  for(i in 1:nd){
-    distMats[[i]]<- as.matrix(distMats[[i]])
-  }
-  
-  minV   =-1
-  maxV   = 1
+
+  minmax = sapply(corMats,function(i){c(min(i),max(i))})
+  minV   = minmax[1,]
+  maxV   = minmax[2,]
 
   if(is.null(factors)) factors = factor(rep(1,nr))
   if(!is.null(factors)) factors = factor(factors)
@@ -76,7 +75,7 @@ corVis <- function(mat,factors=NULL,fun=cor,use="everything",colors = c("#003EFF
             min = minV,
             max = maxV,
             defaultDist = "euclidean",
-            defaultClust= "average",
+            defaultClust= "complete",
             defaultCor  = "pearson",
             rownames = rownames(mat),
                    ...)
