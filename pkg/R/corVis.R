@@ -48,7 +48,6 @@ corVis <- function(mat,factors=NULL,fun=cor,use="everything",colors = c("#003EFF
   distMats = lapply(distMethods,function(i) dist(mat,method = i))
   names(distMats) <-distMethods
   corMats  = lapply(corMethods,function(i) fun(t(mat),method= i,use=use))
-  #corMats  = lapply(corMethods,function(i) {x= fun(t(mat),method= i,use=use); x[lower.tri(x,diag=TRUE)]})
   names(corMats)  <-corMethods
   levels = lapply(clustMethods,function(i){lapply(1:nd,function(j){hc=(hclust(distMats[[j]],method=i)$order-1)})})
   names(levels) = clustMethods
