@@ -18,7 +18,7 @@
 #' @export
 #' @examples
 #' testData <- as.matrix(mtcars)
-#' cost <- rep(c("cheap","expensive","moderate",c(5,5,22)))
+#' cost <- rep(c("cheap","expensive","moderate"),c(5,5,22))
 #' corVis(testData,factors=cost)
 
 corVis <- function(mat,factors=NULL,fun=cor,use="everything",colors = c("#003EFF","#FFFFFF","#FF0000"),plot.title="Correlation Matrix", plot=TRUE, gaeDevel=FALSE,url=NULL,...){

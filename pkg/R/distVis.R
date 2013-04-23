@@ -16,7 +16,7 @@
 #' @export
 #' @examples
 #' testData <- as.matrix(mtcars)
-#' cost <- rep(c("cheap","expensive","moderate",c(5,5,22)))
+#' cost <- rep(c("cheap","expensive","moderate"),c(5,5,22))
 #' distVis(testData,factors=cost)
 
 distVis <- function(mat,factors=NULL,colors = c("#D33F6A","#E99A2C","#E2E6BD"),plot.title="Distance Matrix", plot=TRUE, gaeDevel=FALSE,url=NULL,...){
