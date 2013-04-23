@@ -1,10 +1,11 @@
-\name{distVis}
-\alias{distVis}
-\title{Create a distance matrix visualization}
+\name{corVis}
+\alias{corVis}
+\title{Create a correlation matrix visualization}
 \usage{
-  distVis(mat, factors = NULL,
-    colors = c("#D33F6A", "#E99A2C", "#E2E6BD"),
-    plot.title = "Distance Matrix", plot = TRUE,
+  corVis(mat, factors = NULL, fun = cor,
+    use = "everything",
+    colors = c("#003EFF", "#FFFFFF", "#FF0000"),
+    plot.title = "Correlation Matrix", plot = TRUE,
     gaeDevel = FALSE, url = NULL, ...)
 }
 \arguments{
@@ -12,6 +13,10 @@
 
   \item{factors}{A vector of length nrow(mat) with the
   factors for each row value}
+
+  \item{fun}{Either, cov or cor}
+
+  \item{use}{Use option for fun (see cor help page)}
 
   \item{colors}{Vector of colors that the heatmap should
   range through (3 colors: low, medium, high)}
@@ -31,7 +36,7 @@
   interactive graphic
 }
 \description{
-  \code{distVis} takes a matrix input and creates a matrix
+  \code{corVis} takes a matrix input and creates a matrix
   of distance values for all numeric columns. Points are
   colored by distance values in the data. Users can order
   the distance matrix by various clusterings and
@@ -40,6 +45,6 @@
 \examples{
 testData <- as.matrix(mtcars)
 cost <- rep(c("cheap","expensive","moderate",c(5,5,22)))
-distVis(testData,factors=cost)
+corVis(testData,factors=cost)
 }
 
