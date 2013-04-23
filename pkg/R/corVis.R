@@ -1,12 +1,14 @@
-#' Create a distance matrix visualization
+#' Create a correlation matrix visualization
 #'
-#' \code{distVis} takes a matrix input and creates a matrix of
+#' \code{corVis} takes a matrix input and creates a matrix of
 #' distance values for all numeric columns. Points are colored by
 #' distance values in the data. Users can order the distance matrix
 #' by various clusterings and recalculate distances using various metrics.
 #'
 #' @param mat A matrix to visualize
 #' @param factors A vector of length nrow(mat) with the factors for each row value
+#' @param fun Either, cov or cor
+#' @param use Use option for fun (see cor help page)
 #' @param colors Vector of colors that the heatmap should range through (3 colors: low, medium, high)
 #' @param plot.title The title of the plot to appear on the HTML page
 #' @param plot If TRUE a browser launches and displays the interactive graphic.
@@ -17,9 +19,9 @@
 #' @examples
 #' testData <- as.matrix(mtcars)
 #' cost <- rep(c("cheap","expensive","moderate",c(5,5,22)))
-#' distVis(testData,factors=cost)
+#' corVis(testData,factors=cost)
 
-distVis <- function(mat,factors=NULL,colors = c("#D33F6A","#E99A2C","#E2E6BD"),plot.title="Distance Matrix", plot=TRUE, gaeDevel=FALSE,url=NULL,...){
+corVis <- function(mat,factors=NULL,fun=cor,use="everything",colors = c("#003EFF","#FFFFFF","#FF0000"),plot.title="Correlation Matrix", plot=TRUE, gaeDevel=FALSE,url=NULL,...){
   
   if(class(mat) != "matrix"){
 	stop("mat must be a matrix object")
@@ -32,7 +34,8 @@ distVis <- function(mat,factors=NULL,colors = c("#D33F6A","#E99A2C","#E2E6BD"),p
   if(is.null(rownames(mat))){rownames(mat) = 1:nrow(mat)}
 
   distMethods <- c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski")
-  clustMethods<- c("average", "single", "complete", "ward", "mcquitty", "median", "centroid")
+  clustMethods<- c("complete", "single", "average", "ward", "mcquitty", "median", "centroid")
+  corMethods <- c("pearson","kendall","spearman")
 
   nd <- length(distMethods)
   nc <- length(clustMethods)
@@ -44,18 +47,16 @@ distVis <- function(mat,factors=NULL,colors = c("#D33F6A","#E99A2C","#E2E6BD"),p
  
   distMats = lapply(distMethods,function(i) dist(mat,method = i))
   names(distMats) <-distMethods
+  corMats  = lapply(corMethods,function(i) fun(t(mat),method= i,use=use))
+  names(corMats)  <-corMethods
   levels = lapply(clustMethods,function(i){lapply(1:nd,function(j){hc=(hclust(distMats[[j]],method=i)$order-1)})})
-
   names(levels) = clustMethods
 
   for(i in 1:nc){
     names(levels[[i]])<-distMethods
   }
-  for(i in 1:nd){
-    distMats[[i]]<- as.matrix(distMats[[i]])
-  }
-  
-  minmax = sapply(distMats,function(i){c(min(i),max(i))})
+
+  minmax = sapply(corMats,function(i){c(min(i),max(i))})
   minV   = minmax[1,]
   maxV   = minmax[2,]
 
@@ -63,33 +64,35 @@ distVis <- function(mat,factors=NULL,colors = c("#D33F6A","#E99A2C","#E2E6BD"),p
   if(!is.null(factors)) factors = factor(factors)
 
   # Parameters to pass to javascript
-  d3Params <- list(distMats=distMats,
+  d3Params <- list(corMats = corMats,
             permutations=levels,
             distNames = distMethods,
             clustNames= clustMethods,
+            corNames = corMethods,
             factors = factors,
             colors=colors,
             min = minV,
             max = maxV,
             defaultDist = "euclidean",
-            defaultClust= "average",
+            defaultClust= "complete",
+            defaultCor  = "pearson",
             rownames = rownames(mat),
                    ...)
   
   # Form input types and ranges/options
-  varType <- c("factor","factor")
+  varType <- c("factor","factor","factor")
   
-  varList <- list("Clustering metric" = as.character(c(clustMethods,"none")),"Distance metrics"= as.character(distMethods))
+  varList <- list("Clustering metric" = as.character(c(clustMethods,"none")),"Distance metrics"= as.character(distMethods),"Correlation method" = as.character(corMethods))
   
   # Initialize healthvis object
   healthvisObj <- new("healthvis",
-                      plotType="dist",
+                      plotType="cor",
                       plotTitle=plot.title,
                       varType=varType,
                       varList=varList,
                       d3Params=d3Params,
                       gaeDevel=gaeDevel,
-                      url=url)
+                      url=NULL)
   
   if(plot){
     plot(healthvisObj)
