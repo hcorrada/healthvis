@@ -44,7 +44,7 @@
 }
 \examples{
 testData <- as.matrix(mtcars)
-cost <- rep(c("cheap","expensive","moderate",c(5,5,22)))
+cost <- rep(c("cheap","expensive","moderate"),c(5,5,22))
 corVis(testData,factors=cost)
 }
 
