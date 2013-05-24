@@ -2,7 +2,7 @@
 \name{healthvisOptions}
 \alias{healthvisOptions}
 \title{Options list}
-\format{<environment: 0x7fc3992ce060>}
+\format{<environment: 0x7fb2e5b4dc08>}
 \usage{
   healthvisOptions
 }

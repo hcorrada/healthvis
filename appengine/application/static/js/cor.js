@@ -53,16 +53,8 @@ Colors.names = {
     yellow: "#ffff00"
 };
 
-Colors.random = function() {
-    var result;
-    var count = 0;
-    for (var prop in this.names)
-        if (Math.random() < 1/++count)
-           result = prop;
-    return result;
-};
 
-function HealthvisDist() {
+function HealthvisCor() {
 
     this.width=550;
     this.height=550;
@@ -70,10 +62,11 @@ function HealthvisDist() {
     this.formdata = [];
 
     this.grid = null;
-    this.distMats = null;
+    this.corMats = null;
     this.permutations = null;
     this.clustNames = null;
     this.distNames = null;
+    this.corNames = null;
     this.min = null;
     this.max = null;
     this.rownames = null;
@@ -81,13 +74,9 @@ function HealthvisDist() {
 
     this.clustMethod = null;
     this.distMetric = null;
+    this.corMetric  = null;
 
     this.init = function(elementId, d3Params) {
-        var dimensions = healthvis.getDimensions(this.width, this.height);
-
-        this.width = dimensions.width;
-        this.height = dimensions.height;
-
         this.grid = d3.select('#main')
           .append('svg')
           .attr('width', this.width+this.buffer)
@@ -95,16 +84,18 @@ function HealthvisDist() {
           .attr('class', 'chart');
 
       this.rownames = d3Params.rownames;
-      this.distMats = d3Params.distMats;
+      this.corMats = d3Params.corMats;
       this.permutations = d3Params.permutations;
       this.clustNames = d3Params.clustNames;
       this.distNames = d3Params.distNames;
+      this.corNames  = d3Params.corNames;
       this.min = d3Params.min;
       this.max = d3Params.max;
       this.colors = d3Params.colors;
 
       this.clustMethod = d3Params.defaultClust;
       this.distMetric = d3Params.defaultDist;
+      this.corMetric  = d3Params.defaultCor;
 
       this.margin = {
         top: 75,
@@ -144,17 +135,17 @@ function HealthvisDist() {
       var cols = this.grid.append('g').attr('class', 'cols');
       var factorCols = this.grid.append('g').attr('class', 'factorCols');
 
-      var n = Math.floor(Math.sqrt(this.distMats[this.distMetric].length));
+      var n = Math.floor(Math.sqrt(this.corMats[this.corMetric].length));
       var cellWidth = this.width / n;
       var cellHeight = this.height / n;
-      var max = this.max[this.distMetric];
-      var min = this.min[this.distMetric];
-      var mean = (max + min) * 0.5;
+      var max = this.max[this.corMetric];
+      var min = this.min[this.corMetric];
+      var mean = (max+min) * 0.5;
       var margin = this.margin;
       var colorMap = colorize(min, mean, max, this.colors);
       var ordering = this.clustMethod == 'none' ? d3.range(0, n) : this.permutations[this.clustMethod][this.distMetric];
       table.selectAll('.cell')
-        .data(this.distMats[this.distMetric])
+        .data(this.corMats[this.corMetric])
         .enter()
         .append('rect')
         .attr('class', 'cell')
@@ -227,7 +218,7 @@ function HealthvisDist() {
 
 
     this.update = function(formdata) {
-      for (var i = 0; i < formdata.length; ++i) {
+      for (var i = 0; i < 3; ++i) {
         switch(formdata[i].name) {
           case 'Clustering metric':
             this.clustMethod = formdata[i].value;
@@ -235,10 +226,13 @@ function HealthvisDist() {
           case 'Distance metrics':
             this.distMetric = formdata[i].value;
             break;
+          case 'Correlation method':
+            this.corMetric = formdata[i].value;
+            break;
         }
       }
       this.visualize();
     };
 }
 
-healthvis.register(new HealthvisDist());
+healthvis.register(new HealthvisCor());

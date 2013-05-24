@@ -1,5 +1,5 @@
 application: healthviz
-version: 1-2-0
+version: 1-2-1
 runtime: python27
 api_version: 1
 threadsafe: true
